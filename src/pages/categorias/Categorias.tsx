@@ -1,3 +1,3 @@
 export default function Categorias() {
-  return <div></div>;
+  return <div className="text-white">Categoria</div>;
 }
