@@ -1,3 +1,5 @@
+import type { Component } from "./component.interface";
+
 export interface ApiResponse<T> {
   message: string;
   body: T;
@@ -34,3 +36,23 @@ export interface ImageResponse {
 }
 
 export type ColorType = "red" | "blue" | "green" | "yellow" | "purple";
+export type ImageType = "ROUNDED" | "CIRCLE" | "SQUARE";
+
+export interface ResponseBlog {
+  _id: string;
+  blogName: string;
+  blogSlug: string;
+  blogKey: string;
+  description: string;
+  user: {
+    name: string;
+  };
+  image: ImageResponse;
+  category: CategoryResponse;
+  timeline: string;
+  createdAt: string;
+  blogId: number;
+  __v: number;
+  status: boolean;
+  components: Component[];
+}
