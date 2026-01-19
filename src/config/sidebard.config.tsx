@@ -1,5 +1,6 @@
 import type { SidebarItemProps } from "@/components/layouts/Sidebar/SidebarItem";
 import { LuGrid2X2Plus, LuHouse } from "react-icons/lu";
+import { TbPhoto } from "react-icons/tb";
 import { RxGithubLogo } from "react-icons/rx";
 
 interface SideBarConfigProps {
@@ -33,6 +34,12 @@ export const SideBarConfig: SideBarConfigProps = {
           children: [],
         },
       ],
+    },
+    {
+      href: "/galery",
+      icon: <TbPhoto />,
+      label: "Galería",
+      children: [],
     },
   ],
   footer: [],

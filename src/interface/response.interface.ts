@@ -26,4 +26,11 @@ export interface CategoryResponse {
   __v: number;
 }
 
+export interface ImageResponse {
+  _id: string;
+  url: string;
+  imageId: number;
+  __v: number;
+}
+
 export type ColorType = "red" | "blue" | "green" | "yellow" | "purple";
