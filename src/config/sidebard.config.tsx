@@ -13,11 +13,6 @@ export const SideBarConfig: SideBarConfigProps = {
       icon: <LuHouse />,
       label: "Inicio",
     },
-    {
-      href: "/categorias",
-      icon: <LuHouse />,
-      label: "Categorías",
-    },
   ],
   footer: [],
 };
