@@ -101,7 +101,7 @@ export default function CreateBlogPage() {
   const handleAddComponent = (type: string, defaultValues: unknown) => {
     append({
       type: type as unknown,
-      ...defaultValues,
+      ...(defaultValues as Record<string, unknown>),
     } as any);
   };
 
