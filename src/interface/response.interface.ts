@@ -14,3 +14,16 @@ export interface AuthResponse {
   __v: number;
   token: string;
 }
+
+export interface CategoryResponse {
+  _id: string;
+  name: string;
+  description: string;
+  slug: string;
+  status: boolean;
+  color: string;
+  categoryId: number;
+  __v: number;
+}
+
+export type ColorType = "red" | "blue" | "green" | "yellow" | "purple";
