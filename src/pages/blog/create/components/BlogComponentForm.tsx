@@ -12,6 +12,7 @@ import { LuTrash } from "react-icons/lu";
 import { cn } from "@/utils/cn";
 import { listColor } from "@/utils/listColor";
 import InputIcon from "@/components/shared/input/InputIcon";
+import TiptapEditor from "@/components/shared/editor/TiptapEditor";
 
 interface BlogComponentFormProps {
   index: number;
@@ -344,6 +345,23 @@ export const BlogComponentForm = ({
     </div>
   );
 
+  const renderTextFields = () => (
+    <div className="flex flex-col gap-3">
+      <label className="text-sm font-medium">Contenido</label>
+      <TiptapEditor
+        content={watch(`components.${index}.textComponent.content`) || {}}
+        onChange={(json) => {
+          setValue(`components.${index}.textComponent.content`, json);
+        }}
+      />
+      {getError("textComponent.content") && (
+        <span className="text-tiny text-danger">
+          {getError("textComponent.content") as string}
+        </span>
+      )}
+    </div>
+  );
+
   return (
     <Card className="mb-4 border border-default-200">
       <CardBody>
@@ -366,6 +384,7 @@ export const BlogComponentForm = ({
         {type === "DETAILS" && renderDetailsFields()}
         {type === "TIME_LINE" && renderTimeLineFields()}
         {type === "QUOTE" && renderQuoteFields()}
+        {type === "TEXT" && renderTextFields()}
       </CardBody>
     </Card>
   );

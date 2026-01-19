@@ -120,4 +120,16 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
       },
     },
   },
+  {
+    type: "TEXT",
+    label: "Texto Rico",
+    description: "Editor de texto enriquecido (negrita, listas, etc.).",
+    category: "Content",
+    image: "https://placehold.co/600x400/png?text=Rich+Text", // Placeholder for now or use a generic text icon
+    defaultValues: {
+      textComponent: {
+        content: {}, // JSON content for Tiptap
+      },
+    },
+  },
 ];

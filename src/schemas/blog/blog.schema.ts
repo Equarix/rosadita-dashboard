@@ -17,6 +17,7 @@ export const ComponentTypeEnum = z.enum([
   "TIME_LINE",
   "DETAILS",
   "QUOTE",
+  "TEXT",
   "UNKNOWN",
 ]);
 export const LanguageTypeEnum = z.enum([
@@ -81,6 +82,10 @@ const QuoteComponentSchema = z.object({
   userPosition: z.string().min(1, "Cargo requerido"),
 });
 
+const TextComponentSchema = z.object({
+  content: z.record(z.string(), z.any()).or(z.string()), // Acepta JSON (Tiptap output)
+});
+
 const ComponentSchema = z.object({
   type: ComponentTypeEnum,
   heroComponent: HeroComponentSchema.optional(),
@@ -90,6 +95,7 @@ const ComponentSchema = z.object({
   timeLineComponent: z.array(TimeLineItemSchema).optional(),
   detailsComponent: z.array(DetailsItemSchema).optional(),
   quoteComponent: QuoteComponentSchema.optional(),
+  textComponent: TextComponentSchema.optional(),
 });
 
 export const BlogSchema = z.object({
