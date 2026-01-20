@@ -8,7 +8,7 @@ import {
   Textarea,
 } from "@heroui/react";
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { LuTrash } from "react-icons/lu";
+import { LuTrash, LuGripVertical } from "react-icons/lu";
 import { cn } from "@/utils/cn";
 import { listColor } from "@/utils/listColor";
 import InputIcon from "@/components/shared/input/InputIcon";
@@ -22,7 +22,8 @@ interface BlogComponentFormProps {
 export const BlogComponentForm = ({
   index,
   remove,
-}: BlogComponentFormProps) => {
+  dragHandleProps,
+}: BlogComponentFormProps & { dragHandleProps?: any }) => {
   const {
     register,
     watch,
@@ -366,7 +367,18 @@ export const BlogComponentForm = ({
     <Card className="mb-4 border border-default-200">
       <CardBody>
         <div className="flex justify-between items-center mb-4 pb-2 border-b border-default-100">
-          <div className="font-bold text-primary">{type} Component</div>
+          <div className="flex items-center gap-2">
+            <Button
+              isIconOnly
+              variant="light"
+              size="sm"
+              className="cursor-move touch-none"
+              {...dragHandleProps}
+            >
+              <LuGripVertical className="text-default-400" size={20} />
+            </Button>
+            <div className="font-bold text-primary">{type} Component</div>
+          </div>
           <Button
             isIconOnly
             color="danger"

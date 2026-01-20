@@ -8,7 +8,6 @@ import type {
 import { instance } from "@/libs/axios";
 import ComponentGalleryModal from "@/module/blog/component-gallery/ComponentGalleryModal";
 import ImageGalleryModal from "@/module/blog/image-gallery/ImageGalleryModal";
-import { BlogComponentForm } from "@/pages/blog/create/components/BlogComponentForm";
 import { BlogSchema, type BlogInput } from "@/schemas/blog/blog.schema";
 import {
   addToast,
@@ -26,6 +25,21 @@ import { useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { LuImage, LuTrash } from "react-icons/lu";
 import { useNavigate } from "react-router";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableBlogComponentForm } from "./components/SortableBlogComponentForm";
 
 export default function CreateBlogPage() {
   const { token } = useAuth();
@@ -55,10 +69,27 @@ export default function CreateBlogPage() {
     control,
   } = methods;
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "components",
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = fields.findIndex((item) => item.id === active.id);
+      const newIndex = fields.findIndex((item) => item.id === over.id);
+      move(oldIndex, newIndex);
+    }
+  };
 
   const { data: categoriesData, isLoading: isLoadingCategories } = useQuery<
     ApiResponse<CategoryResponse[]>
@@ -255,13 +286,25 @@ export default function CreateBlogPage() {
             />
 
             <div className="flex flex-col gap-4">
-              {fields.map((field, index) => (
-                <BlogComponentForm
-                  key={field.id}
-                  index={index}
-                  remove={remove}
-                />
-              ))}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={fields}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {fields.map((field, index) => (
+                    <SortableBlogComponentForm
+                      key={field.id}
+                      id={field.id}
+                      index={index}
+                      remove={remove}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
               {fields.length === 0 && (
                 <p className="text-default-400 text-center py-4">
                   No hay componentes agregados
