@@ -116,7 +116,7 @@ export default function EditBlogPage() {
     queryFn: async () => {
       const res = await instance.get("/categories", {
         headers: {
-          Authorization: `Bearer \${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       return res.data;
