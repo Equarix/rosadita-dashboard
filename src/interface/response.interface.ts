@@ -56,3 +56,15 @@ export interface ResponseBlog {
   status: boolean;
   components: Component[];
 }
+
+export interface ResponseUser {
+  isActive: boolean;
+  _id: string;
+  username: string;
+  password: string;
+  role: string;
+  userId: number;
+  fullName: string;
+  __v: number;
+  createdAt: string;
+}

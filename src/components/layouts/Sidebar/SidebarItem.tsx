@@ -8,6 +8,7 @@ import {
 import { LuChevronDown } from "react-icons/lu";
 import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/components/providers/AuthContext";
 
 export interface SidebarItemProps {
   icon: ReactElement<{ size?: number; strokeWidth?: number }>;
@@ -15,6 +16,7 @@ export interface SidebarItemProps {
   badge?: string | number;
   href: string;
   children: SidebarItemProps[];
+  roles?: string[];
 }
 
 export function SidebarItem({
@@ -23,10 +25,16 @@ export function SidebarItem({
   badge,
   href,
   children,
+  roles,
 }: SidebarItemProps) {
   const { pathname } = useLocation();
   const Component = children.length > 0 ? "div" : Link;
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+
+  if (roles && !roles.includes(user?.role || "")) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-1">
