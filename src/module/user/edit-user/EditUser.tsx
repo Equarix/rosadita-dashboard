@@ -2,12 +2,7 @@ import { useAuth } from "@/components/providers/AuthContext";
 import Load from "@/components/shared/load/Load";
 import type { ResponseUser } from "@/interface/response.interface";
 import { instance } from "@/libs/axios";
-import {
-  UserSchema,
-  type CreateUserInput,
-  EditUserSchema,
-  type EditUserInput,
-} from "@/schemas/user/user.schema";
+import { EditUserSchema, type EditUserInput } from "@/schemas/user/user.schema";
 import {
   addToast,
   Button,
