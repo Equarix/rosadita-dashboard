@@ -76,7 +76,7 @@ export default function BlogListPage() {
           },
           {
             header: "Acciones",
-            cell: () => (
+            cell: ({ row }) => (
               <div className="flex items-center gap-2">
                 <Tooltip content="Eliminar blog" color="danger">
                   <Button color="danger" isIconOnly>
@@ -85,7 +85,13 @@ export default function BlogListPage() {
                 </Tooltip>
 
                 <Tooltip content="Editar blog" color="primary">
-                  <Button color="primary" isIconOnly>
+                  <Button
+                    color="primary"
+                    isIconOnly
+                    onPress={() =>
+                      navigate(`/blog/editar/${row.original.blogId}`)
+                    }
+                  >
                     <LuPen />
                   </Button>
                 </Tooltip>
