@@ -36,6 +36,25 @@ export const SideBarConfig: SideBarConfigProps = {
       ],
     },
     {
+      label: "Proyectos",
+      href: "",
+      icon: <LuGrid2X2Plus />,
+      children: [
+        {
+          href: "/project",
+          icon: <LuGrid2X2Plus />,
+          label: "Listar Proyectos",
+          children: [],
+        },
+        {
+          href: "/project/categories",
+          icon: <LuGrid2X2Plus />,
+          label: "Categorías",
+          children: [],
+        },
+      ],
+    },
+    {
       href: "/galery",
       icon: <TbPhoto />,
       label: "Galería",

@@ -28,6 +28,17 @@ export interface CategoryResponse {
   __v: number;
 }
 
+export interface CategoryResponseProyect {
+  _id: string;
+  name: string;
+  description: string;
+  slug: string;
+  status: boolean;
+  color: string;
+  category_proyectId: number;
+  __v: number;
+}
+
 export interface ImageResponse {
   _id: string;
   url: string;
@@ -67,4 +78,20 @@ export interface ResponseUser {
   fullName: string;
   __v: number;
   createdAt: string;
+}
+export interface ResponseProject {
+  _id: string;
+  projectName: string;
+  projectSlug: string;
+  description: string;
+  user: {
+    name: string;
+  };
+  image: ImageResponse;
+  category: CategoryResponseProyect;
+  createdAt: string;
+  projectId: number;
+  __v: number;
+  status: boolean;
+  components: Component[];
 }
