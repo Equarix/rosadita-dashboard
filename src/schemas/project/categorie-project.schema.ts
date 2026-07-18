@@ -6,6 +6,7 @@ export const CategoryProjectSchema = z.object({
     .string()
     .min(10, "La descripción debe tener al menos 10 caracteres"),
   color: z.enum(["red", "blue", "green", "yellow", "purple"], "Color inválido"),
+  isPage: z.boolean().default(false),
 });
 
 export type CategoryProjectInput = z.infer<typeof CategoryProjectSchema>;

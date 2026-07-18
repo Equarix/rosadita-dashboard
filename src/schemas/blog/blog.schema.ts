@@ -18,6 +18,9 @@ export const ComponentTypeEnum = z.enum([
   "DETAILS",
   "QUOTE",
   "TEXT",
+  "IMAGE_CAPTION",
+  "QUESTIONS",
+  "STATS",
   "UNKNOWN",
 ]);
 export const LanguageTypeEnum = z.enum([
@@ -86,7 +89,40 @@ const TextComponentSchema = z.object({
   content: z.record(z.string(), z.any()).or(z.string()), // Acepta JSON (Tiptap output)
 });
 
-const ComponentSchema = z.object({
+const ImageCaption = z.object({
+  url: z.string().url("URL de imagen inválida"),
+  caption: z.string().min(1, "Caption requerido"),
+  icon: z.string().min(1, "Icono requerido"),
+});
+
+const ImageCaptionComponent = z.object({
+  header: z.string().min(1, "Header requerido"),
+  description: z.string().min(1, "Descripción requerida"),
+  subheading: z.string().min(1, "Subheader requerido"),
+  images: z.array(ImageCaption).min(1, "Se requiere al menos una imagen"),
+});
+
+const QuestionComponentSchema = z.object({
+  question: z.string().min(1, "Pregunta requerida"),
+  answer: z.string().min(1, "Respuesta requerida"),
+});
+
+const QuestionsComponentSchema = z.object({
+  subHeading: z.string().optional(),
+  header: z.string().optional(),
+  questions: z
+    .array(QuestionComponentSchema)
+    .min(1, "Al menos una pregunta es requerida"),
+});
+
+const StatsComponentSchema = z.object({
+  text: z.string().min(1, "Texto requerido"),
+  description: z.string().min(1, "Descripción requerida"),
+  color: ColorTypeEnum,
+  positionIcon: z.enum(["LEFT", "RIGHT", "TOP", "BOTTOM"]).or(z.string()),
+});
+
+export const ComponentSchema = z.object({
   type: ComponentTypeEnum,
   heroComponent: HeroComponentSchema.optional(),
   imageComponent: ImageComponentSchema.optional(),
@@ -96,6 +132,9 @@ const ComponentSchema = z.object({
   detailsComponent: z.array(DetailsItemSchema).optional(),
   quoteComponent: QuoteComponentSchema.optional(),
   textComponent: TextComponentSchema.optional(),
+  imageCaptionComponent: ImageCaptionComponent.optional(),
+  questionsComponent: QuestionsComponentSchema.optional(),
+  statsComponent: z.array(StatsComponentSchema).optional(),
 });
 
 export const BlogSchema = z.object({

@@ -132,4 +132,50 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
       },
     },
   },
+  {
+    type: "QUESTIONS",
+    label: "Preguntas Frecuentes",
+    description: "Bloque de preguntas y respuestas.",
+    category: "Content",
+    image: "https://placehold.co/600x400/png?text=FAQ",
+    defaultValues: {
+      questionsComponent: {
+        subHeading: "",
+        header: "",
+        questions: [{ question: "", answer: "" }],
+      },
+    },
+  },
+  {
+    type: "STATS",
+    label: "Estadísticas",
+    description: "Bloque de estadísticas o métricas clave.",
+    category: "Content",
+    image: "https://placehold.co/600x400/png?text=Stats",
+    defaultValues: {
+      statsComponent: [
+        {
+          text: "",
+          description: "",
+          color: "blue",
+          positionIcon: "LEFT",
+        },
+      ],
+    },
+  },
+  {
+    type: "IMAGE_CAPTION",
+    label: "Galería de Imágenes",
+    description: "Imágenes con títulos y descripciones cortas.",
+    category: "Media",
+    image: "https://placehold.co/600x400/png?text=Image+Caption",
+    defaultValues: {
+      imageCaptionComponent: {
+        header: "",
+        description: "",
+        subheading: "",
+        images: [{ url: "", caption: "", icon: "" }],
+      },
+    },
+  },
 ];

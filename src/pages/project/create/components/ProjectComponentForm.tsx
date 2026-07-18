@@ -362,6 +362,121 @@ export const ProjectComponentForm = ({
     </div>
   );
 
+  const renderQuestionsFields = () => {
+    const { fields: questionFields, append: appendQuestion, remove: removeQuestion } = useFieldArray({
+      control,
+      name: `components.${index}.questionsComponent.questions`,
+    });
+
+    return (
+      <div className="flex flex-col gap-3">
+        <Input label="Subheading" {...register(`components.${index}.questionsComponent.subHeading`)} />
+        <Input label="Header" {...register(`components.${index}.questionsComponent.header`)} />
+        
+        <h4 className="text-sm font-semibold mt-2">Preguntas</h4>
+        {questionFields.map((field, k) => (
+          <div key={field.id} className="flex gap-2 items-center border-l-2 pl-2">
+            <div className="flex flex-col gap-2 flex-1">
+              <Input label="Pregunta" {...register(`components.${index}.questionsComponent.questions.${k}.question`)} />
+              <Input label="Respuesta" {...register(`components.${index}.questionsComponent.questions.${k}.answer`)} />
+            </div>
+            <Button isIconOnly color="danger" variant="light" onPress={() => removeQuestion(k)}>
+              <LuTrash />
+            </Button>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendQuestion({ question: "", answer: "" })}>Agregar Pregunta</Button>
+      </div>
+    );
+  };
+
+  const renderStatsFields = () => {
+    const { fields: statsFields, append: appendStat, remove: removeStat } = useFieldArray({
+      control,
+      name: `components.${index}.statsComponent`,
+    });
+
+    return (
+      <div className="flex flex-col gap-3">
+        <h4 className="text-sm font-semibold">Estadísticas</h4>
+        {statsFields.map((field, k) => (
+          <div key={field.id} className="flex flex-col gap-2 border p-2 rounded">
+            <div className="flex justify-between">
+              <span className="text-xs">Stat {k + 1}</span>
+              <Button isIconOnly size="sm" color="danger" variant="light" onPress={() => removeStat(k)}>
+                <LuTrash />
+              </Button>
+            </div>
+            <Input label="Texto" {...register(`components.${index}.statsComponent.${k}.text`)} />
+            <Input label="Descripción" {...register(`components.${index}.statsComponent.${k}.description`)} />
+            <div className="flex gap-2">
+              <Select
+                label="Color"
+                items={listColor}
+                selectedKeys={[watch(`components.${index}.statsComponent.${k}.color`) || "blue"]}
+                onChange={(e) => setValue(`components.${index}.statsComponent.${k}.color`, e.target.value)}
+              >
+                {(color) => (
+                  <SelectItem key={color.value} textValue={color.label}>
+                    <div className="flex items-center gap-2">
+                      <span className={cn(`size-4 inline-block`, color.className)} />
+                      {color.label}
+                    </div>
+                  </SelectItem>
+                )}
+              </Select>
+              <Select
+                label="Posición de Icono"
+                {...register(`components.${index}.statsComponent.${k}.positionIcon`)}
+                defaultSelectedKeys={["LEFT"]}
+              >
+                {["LEFT", "RIGHT", "TOP", "BOTTOM"].map((c) => (
+                  <SelectItem key={c}>{c}</SelectItem>
+                ))}
+              </Select>
+            </div>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendStat({ text: "", description: "", color: "blue", positionIcon: "LEFT" })}>Agregar Estadística</Button>
+      </div>
+    );
+  };
+
+  const renderImageCaptionFields = () => {
+    const { fields: imgFields, append: appendImg, remove: removeImg } = useFieldArray({
+      control,
+      name: `components.${index}.imageCaptionComponent.images`,
+    });
+
+    return (
+      <div className="flex flex-col gap-3">
+        <Input label="Header" {...register(`components.${index}.imageCaptionComponent.header`)} />
+        <Input label="Subheading" {...register(`components.${index}.imageCaptionComponent.subheading`)} />
+        <Textarea label="Descripción" {...register(`components.${index}.imageCaptionComponent.description`)} />
+
+        <h4 className="text-sm font-semibold mt-2">Imágenes</h4>
+        {imgFields.map((field, k) => (
+          <div key={field.id} className="flex flex-col gap-2 border p-2 rounded">
+            <div className="flex justify-between">
+              <span className="text-xs">Imagen {k + 1}</span>
+              <Button isIconOnly size="sm" color="danger" variant="light" onPress={() => removeImg(k)}>
+                <LuTrash />
+              </Button>
+            </div>
+            <Input label="URL de la Imagen" {...register(`components.${index}.imageCaptionComponent.images.${k}.url`)} />
+            <Input label="Caption" {...register(`components.${index}.imageCaptionComponent.images.${k}.caption`)} />
+            <InputIcon
+              label="Icon (Lucide Name)"
+              value={watch(`components.${index}.imageCaptionComponent.images.${k}.icon`) || ""}
+              onChange={(val) => setValue(`components.${index}.imageCaptionComponent.images.${k}.icon`, val)}
+            />
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendImg({ url: "", caption: "", icon: "" })}>Agregar Imagen</Button>
+      </div>
+    );
+  };
+
   return (
     <Card className="mb-4 border border-default-200">
       <CardBody>
@@ -396,6 +511,9 @@ export const ProjectComponentForm = ({
         {type === "TIME_LINE" && renderTimeLineFields()}
         {type === "QUOTE" && renderQuoteFields()}
         {type === "TEXT" && renderTextFields()}
+        {type === "QUESTIONS" && renderQuestionsFields()}
+        {type === "STATS" && renderStatsFields()}
+        {type === "IMAGE_CAPTION" && renderImageCaptionFields()}
       </CardBody>
     </Card>
   );

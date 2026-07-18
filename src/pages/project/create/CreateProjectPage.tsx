@@ -21,6 +21,7 @@ import {
   SelectItem,
   Textarea,
   useDisclosure,
+  Checkbox,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -66,6 +67,7 @@ export default function CreateProjectPage() {
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
       components: [],
+      isPage: false,
     },
   });
 
@@ -163,13 +165,31 @@ export default function CreateProjectPage() {
           className="flex flex-col gap-4 bg-default-50 p-6 rounded-lg"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Nombre del Proyecto"
-              {...register("projectName")}
-              errorMessage={errors.projectName?.message}
-              labelPlacement="outside"
-              placeholder="Ingrese el nombre"
-            />
+            <div className="flex flex-col gap-4">
+              <Input
+                label="Nombre del Proyecto"
+                {...register("projectName")}
+                errorMessage={errors.projectName?.message}
+                labelPlacement="outside"
+                placeholder="Ingrese el nombre"
+              />
+
+              <Controller
+                control={control}
+                name="isPage"
+                render={({ field: { value, onChange, name } }) => (
+                  <div className="mt-2">
+                    <Checkbox
+                      isSelected={value}
+                      onValueChange={onChange}
+                      name={name}
+                    >
+                      ¿Es una página?
+                    </Checkbox>
+                  </div>
+                )}
+              />
+            </div>
 
             <div className="flex flex-col gap-2 row-span-2">
               <span className="text-small font-medium text-foreground">

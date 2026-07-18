@@ -1,20 +1,22 @@
 import { cn } from "@heroui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   cloneElement,
   isValidElement,
   useState,
   type ReactElement,
 } from "react";
-import { LuChevronDown } from "react-icons/lu";
+import { LuChevronDown, LuPlus } from "react-icons/lu";
 import { Link, useLocation } from "react-router";
-import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthContext";
 
 export interface SidebarItemProps {
   icon: ReactElement<{ size?: number; strokeWidth?: number }>;
   label: string;
   badge?: string | number;
+  hasPlus?: boolean;
   href: string;
+  isOpen?: boolean;
   children: SidebarItemProps[];
   roles?: string[];
 }
@@ -23,14 +25,33 @@ export function SidebarItem({
   icon: Icon,
   label,
   badge,
+  hasPlus,
   href,
+  isOpen,
   children,
   roles,
 }: SidebarItemProps) {
   const { pathname } = useLocation();
-  const Component = children.length > 0 ? "div" : Link;
-  const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
+  const Component = children.length > 0 ? "div" : Link;
+
+  const isPathActive = () => {
+    if (href === "/") return pathname === "/";
+    if (children.length > 0) {
+      return pathname.startsWith(href);
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const hasActiveChild = (items: SidebarItemProps[]): boolean => {
+    return items.some((child) => {
+      if (pathname === child.href) return true;
+      if (child.children.length > 0) return hasActiveChild(child.children);
+      return false;
+    });
+  };
+
+  const [isOpenSubItems, setIsOpenSubItems] = useState(() => hasActiveChild(children));
 
   if (roles && !roles.includes(user?.role || "")) {
     return null;
@@ -40,24 +61,27 @@ export function SidebarItem({
     <div className="flex flex-col gap-1">
       <Component
         className={cn(
-          "flex items-center justify-between w-full px-3 py-2 rounded-xl transition-colors cursor-pointer group",
-          pathname === href
-            ? "bg-white text-black"
+          "flex items-center justify-between w-full px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group",
+          isPathActive()
+            ? "bg-white text-black shadow-lg"
             : "text-zinc-400 hover:bg-zinc-800/50 hover:text-white",
+          !isOpen && "px-0 justify-center",
         )}
         to={href}
         onClick={() => {
           if (children.length > 0) {
-            setIsOpen(!isOpen);
+            setIsOpenSubItems(!isOpenSubItems);
           }
         }}
       >
         <div className="flex items-center gap-3">
-          {isValidElement(Icon) &&
-            cloneElement(Icon, {
-              size: 20,
-            })}
-          <span className="text-sm font-medium">{label}</span>
+          <div>
+            {isValidElement(Icon) &&
+              cloneElement(Icon, {
+                size: 24,
+              })}
+          </div>
+          {isOpen && <span className="font-medium whitespace-nowrap text-sm">{label}</span>}
         </div>
         <div className="flex items-center gap-2">
           {badge && (
@@ -72,29 +96,36 @@ export function SidebarItem({
               {badge}
             </span>
           )}
-          {children.length > 0 && (
+          {hasPlus && (
+            <LuPlus
+              size={16}
+              className="text-zinc-500 group-hover:text-zinc-300 transition-colors"
+            />
+          )}
+
+          {children.length > 0 && isOpen && (
             <LuChevronDown
               size={16}
               className={cn(
                 "text-zinc-500 transition-all group-hover:text-zinc-300",
-                isOpen && "rotate-180",
+                isOpenSubItems && "rotate-180",
+                isPathActive() && "text-black",
               )}
             />
           )}
         </div>
       </Component>
-
       <AnimatePresence>
-        {isOpen && children.length > 0 && (
+        {isOpenSubItems && children.length > 0 && isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col pl-4 border-l overflow-hidden border-zinc-800"
+            className="flex flex-col pl-4 border-l gap-1 overflow-hidden border-zinc-800"
           >
             {children.map((child) => (
-              <SidebarItem key={child.href} {...child} />
+              <SidebarItem key={child.href} {...child} isOpen={isOpen} />
             ))}
           </motion.div>
         )}

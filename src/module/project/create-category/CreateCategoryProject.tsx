@@ -47,6 +47,8 @@ export default function CreateCategoryProject({
     resolver: zodResolver(CategoryProjectSchema),
   });
 
+  console.log(errors);
+
   const { token } = useAuth();
 
   const { mutate, isPending } = useMutation({
@@ -85,7 +87,11 @@ export default function CreateCategoryProject({
             <ModalHeader className="flex flex-col gap-1">
               Crear categoría de proyecto
             </ModalHeader>
-            <form onSubmit={handleSubmit((values) => mutate(values as CategoryProjectInput))}>
+            <form
+              onSubmit={handleSubmit((values) =>
+                mutate(values as CategoryProjectInput),
+              )}
+            >
               <ModalBody>
                 <Input
                   label="Nombre"
