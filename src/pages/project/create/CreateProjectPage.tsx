@@ -67,6 +67,7 @@ export default function CreateProjectPage() {
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
       components: [],
+      technologies: [],
       isPage: false,
     },
   });
@@ -77,12 +78,26 @@ export default function CreateProjectPage() {
     formState: { errors },
     setValue,
     control,
+    watch,
   } = methods;
 
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "components",
   });
+
+  const techFields = watch("technologies") || [];
+
+  const appendTech = (val: string = "") => {
+    setValue("technologies", [...techFields, val]);
+  };
+
+  const removeTech = (index: number) => {
+    setValue(
+      "technologies",
+      techFields.filter((_, i) => i !== index),
+    );
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -289,6 +304,47 @@ export default function CreateProjectPage() {
             placeholder="Descripción del proyecto"
             minRows={4}
           />
+
+          <div className="flex flex-col gap-3 mt-4 border border-default-200 p-4 rounded-lg">
+            <div className="flex justify-between items-center">
+              <label className="text-small font-medium text-foreground">
+                Tecnologías
+              </label>
+              <Button size="sm" onPress={() => appendTech("")}>
+                Agregar Tecnología
+              </Button>
+            </div>
+            {techFields.map((_, index) => (
+              <div key={index} className="flex gap-2 items-center">
+                <Input
+                  {...register(`technologies.${index}`)}
+                  placeholder="Ej: React, Node.js..."
+                  className="flex-1"
+                />
+                <Button
+                  isIconOnly
+                  color="danger"
+                  variant="light"
+                  onPress={() => removeTech(index)}
+                >
+                  <LuTrash />
+                </Button>
+              </div>
+            ))}
+            {errors.technologies?.message && (
+              <span className="text-tiny text-danger">
+                {errors.technologies.message as string}
+              </span>
+            )}
+            {/* Display individual technology error if any */}
+            {(errors.technologies as any)?.map?.((err: any, idx: number) =>
+              err?.message ? (
+                <span key={idx} className="text-tiny text-danger">
+                  Error en item {idx + 1}: {err.message}
+                </span>
+              ) : null,
+            )}
+          </div>
 
           <div className="border-t border-default-200 pt-4 mt-2">
             <div className="flex justify-between items-center mb-4">

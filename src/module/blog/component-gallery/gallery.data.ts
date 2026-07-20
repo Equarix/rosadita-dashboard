@@ -7,6 +7,10 @@ import NextArticleComponent from "@/assets/images/next_article_component.png";
 import TimeLineComponent from "@/assets/images/time_line_component.png";
 import DetailsComponent from "@/assets/images/details_component.png";
 import QuoteComponent from "@/assets/images/quote_component.png";
+import HeaderComponent from "@/assets/images/header-component.png";
+import ImageCaptionComponent from "@/assets/images/image-caption-component.png";
+import StatComponent from "@/assets/images/stats-component.png";
+import QuestionComponent from "@/assets/images/questions-component.png";
 
 export type ComponentCategory = "Layout" | "Media" | "Content" | "Navigation";
 
@@ -137,7 +141,7 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
     label: "Preguntas Frecuentes",
     description: "Bloque de preguntas y respuestas.",
     category: "Content",
-    image: "https://placehold.co/600x400/png?text=FAQ",
+    image: QuestionComponent,
     defaultValues: {
       questionsComponent: {
         subHeading: "",
@@ -151,7 +155,7 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
     label: "Estadísticas",
     description: "Bloque de estadísticas o métricas clave.",
     category: "Content",
-    image: "https://placehold.co/600x400/png?text=Stats",
+    image: StatComponent,
     defaultValues: {
       statsComponent: [
         {
@@ -168,13 +172,29 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
     label: "Galería de Imágenes",
     description: "Imágenes con títulos y descripciones cortas.",
     category: "Media",
-    image: "https://placehold.co/600x400/png?text=Image+Caption",
+    image: ImageCaptionComponent,
     defaultValues: {
       imageCaptionComponent: {
         header: "",
         description: "",
         subheading: "",
         images: [{ url: "", caption: "", icon: "" }],
+      },
+    },
+  },
+  {
+    type: "HEADER",
+    label: "Encabezado (Header)",
+    description: "Barra de navegación principal con logo, botones y enlaces.",
+    category: "Layout",
+    image: HeaderComponent,
+    defaultValues: {
+      headerComponent: {
+        proyectName: "",
+        proyectIcon: "",
+        isFixed: true,
+        buttons: [{ name: "", link: "", key: "", isExternal: false }],
+        items: [{ name: "", key: "" }],
       },
     },
   },

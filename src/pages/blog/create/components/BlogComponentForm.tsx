@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Button,
   Card,
@@ -6,9 +7,12 @@ import {
   Select,
   SelectItem,
   Textarea,
+  Switch,
+  Tabs,
+  Tab,
 } from "@heroui/react";
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { LuTrash, LuGripVertical } from "react-icons/lu";
+import { LuTrash, LuGripVertical, LuChevronUp, LuChevronDown } from "react-icons/lu";
 import { cn } from "@/utils/cn";
 import { listColor } from "@/utils/listColor";
 import InputIcon from "@/components/shared/input/InputIcon";
@@ -32,6 +36,16 @@ export const BlogComponentForm = ({
     formState: { errors },
   } = useFormContext();
   const type = watch(`components.${index}.type`);
+  const [isOpen, setIsOpen] = useState(true);
+
+  const { fields: detailFields, append: appendDetail, remove: removeDetail } = useFieldArray({ control, name: `components.${index}.detailsComponent` });
+  const { fields: timelineFields, append: appendTimeLineItem, remove: removeTimeLineItem } = useFieldArray({ control, name: `components.${index}.timeLineComponent` });
+  const { fields: questionFields, append: appendQuestion, remove: removeQuestion } = useFieldArray({ control, name: `components.${index}.questionsComponent.questions` });
+  const { fields: statsFields, append: appendStat, remove: removeStat } = useFieldArray({ control, name: `components.${index}.statsComponent` });
+  const { fields: imgFields, append: appendImg, remove: removeImg } = useFieldArray({ control, name: `components.${index}.imageCaptionComponent.images` });
+  const { fields: btnFields, append: appendBtn, remove: removeBtn } = useFieldArray({ control, name: `components.${index}.headerComponent.buttons` });
+  const { fields: headerItemFields, append: appendHeaderItem, remove: removeHeaderItem } = useFieldArray({ control, name: `components.${index}.headerComponent.items` });
+
 
   // Helper to get error message safely
   const getError = (path: string) => {
@@ -172,15 +186,6 @@ export const BlogComponentForm = ({
   );
 
   const renderDetailsFields = () => {
-    const {
-      fields: detailFields,
-      append: appendDetail,
-      remove: removeDetail,
-    } = useFieldArray({
-      control,
-      name: `components.${index}.detailsComponent`,
-    });
-
     return (
       <div className="flex flex-col gap-3">
         <h4 className="text-sm font-semibold">Detalles</h4>
@@ -215,15 +220,6 @@ export const BlogComponentForm = ({
   };
 
   const renderTimeLineFields = () => {
-    const {
-      fields: timelineFields,
-      append: appendItem,
-      remove: removeItem,
-    } = useFieldArray({
-      control,
-      name: `components.${index}.timeLineComponent`,
-    });
-
     return (
       <div className="flex flex-col gap-3">
         <h4 className="text-sm font-semibold">Linea de Tiempo</h4>
@@ -239,7 +235,7 @@ export const BlogComponentForm = ({
                 size="sm"
                 color="danger"
                 variant="light"
-                onPress={() => removeItem(k)}
+                onPress={() => removeTimeLineItem(k)}
               >
                 <LuTrash />
               </Button>
@@ -306,7 +302,7 @@ export const BlogComponentForm = ({
         <Button
           size="sm"
           onPress={() =>
-            appendItem({
+            appendTimeLineItem({
               title: "",
               icon: "",
               description: "",
@@ -363,6 +359,161 @@ export const BlogComponentForm = ({
     </div>
   );
 
+  const renderQuestionsFields = () => {
+    return (
+      <div className="flex flex-col gap-3">
+        <Input label="Subheading" {...register(`components.${index}.questionsComponent.subHeading`)} />
+        <Input label="Header" {...register(`components.${index}.questionsComponent.header`)} />
+        
+        <h4 className="text-sm font-semibold mt-2">Preguntas</h4>
+        {questionFields.map((field, k) => (
+          <div key={field.id} className="flex gap-2 items-center border-l-2 pl-2">
+            <div className="flex flex-col gap-2 flex-1">
+              <Input label="Pregunta" {...register(`components.${index}.questionsComponent.questions.${k}.question`)} />
+              <Input label="Respuesta" {...register(`components.${index}.questionsComponent.questions.${k}.answer`)} />
+            </div>
+            <Button isIconOnly color="danger" variant="light" onPress={() => removeQuestion(k)}>
+              <LuTrash />
+            </Button>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendQuestion({ question: "", answer: "" })}>Agregar Pregunta</Button>
+      </div>
+    );
+  };
+
+  const renderStatsFields = () => {
+    return (
+      <div className="flex flex-col gap-3">
+        <h4 className="text-sm font-semibold">Estadísticas</h4>
+        {statsFields.map((field, k) => (
+          <div key={field.id} className="flex flex-col gap-2 border p-2 rounded">
+            <div className="flex justify-between">
+              <span className="text-xs">Stat {k + 1}</span>
+              <Button isIconOnly size="sm" color="danger" variant="light" onPress={() => removeStat(k)}>
+                <LuTrash />
+              </Button>
+            </div>
+            <Input label="Texto" {...register(`components.${index}.statsComponent.${k}.text`)} />
+            <Input label="Descripción" {...register(`components.${index}.statsComponent.${k}.description`)} />
+            <InputIcon
+              label="Icon (Lucide Name)"
+              value={watch(`components.${index}.statsComponent.${k}.icon`) || ""}
+              onChange={(val) => setValue(`components.${index}.statsComponent.${k}.icon`, val)}
+            />
+            <div className="flex gap-2">
+              <Select
+                label="Color"
+                items={listColor}
+                selectedKeys={[watch(`components.${index}.statsComponent.${k}.color`) || "blue"]}
+                onChange={(e) => setValue(`components.${index}.statsComponent.${k}.color`, e.target.value)}
+              >
+                {(color) => (
+                  <SelectItem key={color.value} textValue={color.label}>
+                    <div className="flex items-center gap-2">
+                      <span className={cn(`size-4 inline-block`, color.className)} />
+                      {color.label}
+                    </div>
+                  </SelectItem>
+                )}
+              </Select>
+              <Select
+                label="Posición de Icono"
+                {...register(`components.${index}.statsComponent.${k}.positionIcon`)}
+                defaultSelectedKeys={["LEFT"]}
+              >
+                {["LEFT", "RIGHT", "TOP", "BOTTOM"].map((c) => (
+                  <SelectItem key={c}>{c}</SelectItem>
+                ))}
+              </Select>
+            </div>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendStat({ text: "", description: "", color: "blue", positionIcon: "LEFT", icon: "" })}>Agregar Estadística</Button>
+      </div>
+    );
+  };
+
+  const renderImageCaptionFields = () => {
+    return (
+      <div className="flex flex-col gap-3">
+        <Input label="Header" {...register(`components.${index}.imageCaptionComponent.header`)} />
+        <Input label="Subheading" {...register(`components.${index}.imageCaptionComponent.subheading`)} />
+        <Textarea label="Descripción" {...register(`components.${index}.imageCaptionComponent.description`)} />
+
+        <h4 className="text-sm font-semibold mt-2">Imágenes</h4>
+        {imgFields.map((field, k) => (
+          <div key={field.id} className="flex flex-col gap-2 border p-2 rounded">
+            <div className="flex justify-between">
+              <span className="text-xs">Imagen {k + 1}</span>
+              <Button isIconOnly size="sm" color="danger" variant="light" onPress={() => removeImg(k)}>
+                <LuTrash />
+              </Button>
+            </div>
+            <Input label="URL de la Imagen" {...register(`components.${index}.imageCaptionComponent.images.${k}.url`)} />
+            <Input label="Caption" {...register(`components.${index}.imageCaptionComponent.images.${k}.caption`)} />
+            <InputIcon
+              label="Icon (Lucide Name)"
+              value={watch(`components.${index}.imageCaptionComponent.images.${k}.icon`) || ""}
+              onChange={(val) => setValue(`components.${index}.imageCaptionComponent.images.${k}.icon`, val)}
+            />
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendImg({ url: "", caption: "", icon: "" })}>Agregar Imagen</Button>
+      </div>
+    );
+  };
+
+  const renderHeaderFields = () => {
+    return (
+      <div className="flex flex-col gap-3">
+        <Input label="Nombre del Proyecto" {...register(`components.${index}.headerComponent.proyectName`)} errorMessage={getError("headerComponent.proyectName") as string} />
+        <Input label="Icono del Proyecto (URL)" {...register(`components.${index}.headerComponent.proyectIcon`)} errorMessage={getError("headerComponent.proyectIcon") as string} />
+        <Switch
+          isSelected={watch(`components.${index}.headerComponent.isFixed`) || false}
+          onValueChange={(val) => setValue(`components.${index}.headerComponent.isFixed`, val)}
+        >
+          ¿Es fijo (Fixed)?
+        </Switch>
+        
+        <h4 className="text-sm font-semibold mt-2">Botones</h4>
+        {btnFields.map((field, k) => (
+          <div key={field.id} className="flex gap-2 items-center border-l-2 pl-2">
+            <div className="flex flex-col gap-2 flex-1">
+              <Input label="Nombre" {...register(`components.${index}.headerComponent.buttons.${k}.name`)} />
+              <Input label="Link" {...register(`components.${index}.headerComponent.buttons.${k}.link`)} />
+              <Input label="Key" {...register(`components.${index}.headerComponent.buttons.${k}.key`)} />
+              <Switch
+                isSelected={watch(`components.${index}.headerComponent.buttons.${k}.isExternal`) || false}
+                onValueChange={(val) => setValue(`components.${index}.headerComponent.buttons.${k}.isExternal`, val)}
+              >
+                ¿Es externo?
+              </Switch>
+            </div>
+            <Button isIconOnly color="danger" variant="light" onPress={() => removeBtn(k)}>
+              <LuTrash />
+            </Button>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendBtn({ name: "", link: "", key: "", isExternal: false })}>Agregar Botón</Button>
+
+        <h4 className="text-sm font-semibold mt-2">Items</h4>
+        {headerItemFields.map((field, k) => (
+          <div key={field.id} className="flex gap-2 items-center border-l-2 pl-2">
+            <div className="flex flex-col gap-2 flex-1">
+              <Input label="Nombre" {...register(`components.${index}.headerComponent.items.${k}.name`)} />
+              <Input label="Key" {...register(`components.${index}.headerComponent.items.${k}.key`)} />
+            </div>
+            <Button isIconOnly color="danger" variant="light" onPress={() => removeHeaderItem(k)}>
+              <LuTrash />
+            </Button>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendHeaderItem({ name: "", key: "" })}>Agregar Item</Button>
+      </div>
+    );
+  };
+
   return (
     <Card className="mb-4 border border-default-200">
       <CardBody>
@@ -379,24 +530,50 @@ export const BlogComponentForm = ({
             </Button>
             <div className="font-bold text-primary">{type} Component</div>
           </div>
-          <Button
-            isIconOnly
-            color="danger"
-            variant="light"
-            onPress={() => remove(index)}
-          >
-            <LuTrash />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              isIconOnly
+              variant="light"
+              onPress={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <LuChevronUp /> : <LuChevronDown />}
+            </Button>
+            <Button
+              isIconOnly
+              color="danger"
+              variant="light"
+              onPress={() => remove(index)}
+            >
+              <LuTrash />
+            </Button>
+          </div>
         </div>
 
-        {type === "HERO" && renderHeroFields()}
-        {type === "IMAGE" && renderImageFields()}
-        {type === "CODE" && renderCodeFields()}
-        {type === "NEXT_ARTICLE" && renderNextArticleFields()}
-        {type === "DETAILS" && renderDetailsFields()}
-        {type === "TIME_LINE" && renderTimeLineFields()}
-        {type === "QUOTE" && renderQuoteFields()}
-        {type === "TEXT" && renderTextFields()}
+        {isOpen && (
+          <Tabs aria-label="Component options">
+            <Tab key="content" title="Contenido">
+              <div className="pt-2">
+                {type === "HERO" && renderHeroFields()}
+                {type === "IMAGE" && renderImageFields()}
+                {type === "CODE" && renderCodeFields()}
+                {type === "NEXT_ARTICLE" && renderNextArticleFields()}
+                {type === "DETAILS" && renderDetailsFields()}
+                {type === "TIME_LINE" && renderTimeLineFields()}
+                {type === "QUOTE" && renderQuoteFields()}
+                {type === "TEXT" && renderTextFields()}
+                {type === "QUESTIONS" && renderQuestionsFields()}
+                {type === "STATS" && renderStatsFields()}
+                {type === "IMAGE_CAPTION" && renderImageCaptionFields()}
+                {type === "HEADER" && renderHeaderFields()}
+              </div>
+            </Tab>
+            <Tab key="settings" title="Ajustes">
+              <div className="pt-2">
+                <Input label="Key (Opcional)" {...register(`components.${index}.key`)} />
+              </div>
+            </Tab>
+          </Tabs>
+        )}
       </CardBody>
     </Card>
   );

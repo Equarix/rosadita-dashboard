@@ -94,4 +94,5 @@ export interface ResponseProject {
   __v: number;
   status: boolean;
   components: Component[];
+  technologies: string[];
 }

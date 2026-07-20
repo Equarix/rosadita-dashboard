@@ -10,6 +10,9 @@ export const ProjectSchema = z.object({
   imageId: z.coerce.number().min(1, "ID de imagen requerido"),
   isPage: z.boolean().default(false).optional(),
   components: z.array(ComponentSchema).optional(),
+  technologies: z
+    .array(z.string().min(1, "La tecnología no puede estar vacía"))
+    .min(1, "Debe agregar al menos una tecnología"),
 });
 
 export type ProjectInput = z.infer<typeof ProjectSchema>;

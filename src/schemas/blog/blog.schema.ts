@@ -21,6 +21,7 @@ export const ComponentTypeEnum = z.enum([
   "IMAGE_CAPTION",
   "QUESTIONS",
   "STATS",
+  "HEADER",
   "UNKNOWN",
 ]);
 export const LanguageTypeEnum = z.enum([
@@ -119,11 +120,51 @@ const StatsComponentSchema = z.object({
   text: z.string().min(1, "Texto requerido"),
   description: z.string().min(1, "Descripción requerida"),
   color: ColorTypeEnum,
-  positionIcon: z.enum(["LEFT", "RIGHT", "TOP", "BOTTOM"]).or(z.string()),
+  icon: z.string().min(1, "Icono requerido").optional(),
+  positionIcon: z
+    .enum(["LEFT", "RIGHT", "TOP", "BOTTOM"])
+    .or(z.string())
+    .optional(),
 });
 
-export const ComponentSchema = z.object({
+const HeaderButtonComponentSchema = z
+  .object({
+    name: z.string().min(1, "Nombre requerido"),
+    link: z.string().optional().or(z.literal("")),
+    key: z.string().optional(),
+    isExternal: z.boolean(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.isExternal && val.link && val.link.trim() !== "") {
+      const isUrl = z.string().url().safeParse(val.link).success;
+      if (!isUrl) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "URL inválida para enlace externo",
+          path: ["link"],
+        });
+      }
+    }
+  });
+
+const HeaderItemComponentSchema = z.object({
+  name: z.string().min(1, "Nombre requerido"),
+  key: z.string().min(1, "Key requerida"),
+});
+
+const HeaderComponentSchema = z.object({
+  proyectName: z.string().min(1, "Nombre de proyecto requerido"),
+  proyectIcon: z.string().url("URL de icono inválida"),
+  isFixed: z.boolean(),
+  buttons: z.array(HeaderButtonComponentSchema).optional(),
+  items: z
+    .array(HeaderItemComponentSchema)
+    .min(1, "Al menos un item requerido"),
+});
+
+const BaseComponentSchema = z.object({
   type: ComponentTypeEnum,
+  key: z.string().optional(),
   heroComponent: HeroComponentSchema.optional(),
   imageComponent: ImageComponentSchema.optional(),
   codeComponent: CodeComponentSchema.optional(),
@@ -135,7 +176,33 @@ export const ComponentSchema = z.object({
   imageCaptionComponent: ImageCaptionComponent.optional(),
   questionsComponent: QuestionsComponentSchema.optional(),
   statsComponent: z.array(StatsComponentSchema).optional(),
+  headerComponent: HeaderComponentSchema.optional(),
 });
+
+const typeToKeyMap: Record<string, string> = {
+  HERO: "heroComponent",
+  IMAGE: "imageComponent",
+  CODE: "codeComponent",
+  NEXT_ARTICLE: "nextArticleComponent",
+  TIME_LINE: "timeLineComponent",
+  DETAILS: "detailsComponent",
+  QUOTE: "quoteComponent",
+  TEXT: "textComponent",
+  IMAGE_CAPTION: "imageCaptionComponent",
+  QUESTIONS: "questionsComponent",
+  STATS: "statsComponent",
+  HEADER: "headerComponent",
+};
+
+export const ComponentSchema = z.preprocess((val: any) => {
+  if (!val || typeof val !== "object") return val;
+  const clean: any = { type: val.type, key: val.key };
+  const compKey = typeToKeyMap[val.type];
+  if (compKey && val[compKey] !== undefined) {
+    clean[compKey] = val[compKey];
+  }
+  return clean;
+}, BaseComponentSchema);
 
 export const BlogSchema = z.object({
   blogName: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
