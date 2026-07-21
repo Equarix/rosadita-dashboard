@@ -35,20 +35,25 @@ export function SidebarItem({
   const { user } = useAuth();
   const Component = children.length > 0 ? "div" : Link;
 
-  const isPathActive = () => {
-    if (href === "/") return pathname === "/";
-    if (children.length > 0) {
-      return pathname.startsWith(href);
-    }
-    return pathname === href || pathname.startsWith(`${href}/`);
+  const checkIsActive = (itemHref: string) => {
+    if (itemHref === "/") return pathname === "/";
+    if (!itemHref) return false;
+    return pathname === itemHref || pathname.startsWith(`${itemHref}/`);
   };
 
   const hasActiveChild = (items: SidebarItemProps[]): boolean => {
     return items.some((child) => {
-      if (pathname === child.href) return true;
-      if (child.children.length > 0) return hasActiveChild(child.children);
+      if (checkIsActive(child.href)) return true;
+      if (child.children?.length > 0) return hasActiveChild(child.children);
       return false;
     });
+  };
+
+  const isPathActive = () => {
+    if (children?.length > 0) {
+      return hasActiveChild(children);
+    }
+    return checkIsActive(href);
   };
 
   const [isOpenSubItems, setIsOpenSubItems] = useState(() => hasActiveChild(children));
