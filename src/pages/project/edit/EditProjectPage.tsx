@@ -130,6 +130,7 @@ export default function EditProjectPage() {
       return res.data;
     },
     enabled: !!projectId,
+    refetchOnWindowFocus: false,
   });
 
   const { data: categoriesData, isLoading: isLoadingCategories } = useQuery<

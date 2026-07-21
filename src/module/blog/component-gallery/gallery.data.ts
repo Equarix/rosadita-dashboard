@@ -11,6 +11,7 @@ import HeaderComponent from "@/assets/images/header-component.png";
 import ImageCaptionComponent from "@/assets/images/image-caption-component.png";
 import StatComponent from "@/assets/images/stats-component.png";
 import QuestionComponent from "@/assets/images/questions-component.png";
+import TestimonialComponent from "@/assets/images/testimonial-component.png";
 
 export type ComponentCategory = "Layout" | "Media" | "Content" | "Navigation";
 
@@ -195,6 +196,27 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
         isFixed: true,
         buttons: [{ name: "", link: "", key: "", isExternal: false }],
         items: [{ name: "", key: "" }],
+      },
+    },
+  },
+  {
+    type: "TESTIMONIALS",
+    label: "Testimonios",
+    description: "Sección de testimonios de usuarios o clientes.",
+    category: "Content",
+    image: TestimonialComponent,
+    defaultValues: {
+      testimonialsComponent: {
+        title: "",
+        subtitle: "",
+        testimonials: [
+          {
+            starts: 5,
+            description: "",
+            name: "",
+            position: "",
+          },
+        ],
       },
     },
   },

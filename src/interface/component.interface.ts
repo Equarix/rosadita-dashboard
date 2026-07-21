@@ -9,6 +9,7 @@ export interface Component {
   timeLineComponent?: TimeLineComponent[];
   detailsComponent?: DetailsComponent[];
   quoteComponent?: QuoteComponent;
+  testimonialsComponent?: TestimonialsComponent;
 }
 
 export interface HeroComponent {
@@ -62,6 +63,19 @@ export interface QuoteComponent {
   userPosition: string;
 }
 
+export interface TestimonialItem {
+  starts: number;
+  description: string;
+  name: string;
+  position: string;
+}
+
+export interface TestimonialsComponent {
+  title: string;
+  subtitle: string;
+  testimonials: TestimonialItem[];
+}
+
 export type ComponentType =
   | "HERO"
   | "IMAGE"
@@ -70,6 +84,12 @@ export type ComponentType =
   | "TIME_LINE"
   | "DETAILS"
   | "QUOTE"
+  | "TEXT"
+  | "IMAGE_CAPTION"
+  | "QUESTIONS"
+  | "STATS"
+  | "HEADER"
+  | "TESTIMONIALS"
   | "UNKNOWN";
 
 export type LanguageType =

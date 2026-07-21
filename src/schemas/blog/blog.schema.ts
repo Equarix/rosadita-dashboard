@@ -22,6 +22,7 @@ export const ComponentTypeEnum = z.enum([
   "QUESTIONS",
   "STATS",
   "HEADER",
+  "TESTIMONIALS",
   "UNKNOWN",
 ]);
 export const LanguageTypeEnum = z.enum([
@@ -127,6 +128,21 @@ const StatsComponentSchema = z.object({
     .optional(),
 });
 
+const TestimonialItemSchema = z.object({
+  starts: z.coerce.number().min(1).max(5),
+  description: z.string().min(1, "Descripción requerida"),
+  name: z.string().min(1, "Nombre requerido"),
+  position: z.string().min(1, "Cargo requerido"),
+});
+
+const TestimonialsComponentSchema = z.object({
+  title: z.string().min(1, "Título requerido"),
+  subtitle: z.string().min(1, "Subtítulo requerido"),
+  testimonials: z
+    .array(TestimonialItemSchema)
+    .min(1, "Al menos un testimonio requerido"),
+});
+
 const HeaderButtonComponentSchema = z
   .object({
     name: z.string().min(1, "Nombre requerido"),
@@ -177,6 +193,7 @@ const BaseComponentSchema = z.object({
   questionsComponent: QuestionsComponentSchema.optional(),
   statsComponent: z.array(StatsComponentSchema).optional(),
   headerComponent: HeaderComponentSchema.optional(),
+  testimonialsComponent: TestimonialsComponentSchema.optional(),
 });
 
 const typeToKeyMap: Record<string, string> = {
@@ -192,6 +209,7 @@ const typeToKeyMap: Record<string, string> = {
   QUESTIONS: "questionsComponent",
   STATS: "statsComponent",
   HEADER: "headerComponent",
+  TESTIMONIALS: "testimonialsComponent",
 };
 
 export const ComponentSchema = z.preprocess((val: any) => {
