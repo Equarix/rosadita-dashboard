@@ -1,6 +1,9 @@
 import { useAuth } from "@/components/providers/AuthContext";
 import Table from "@/components/ui/table/Table";
-import type { ApiResponse, ClientResponse } from "@/interface/response.interface";
+import type {
+  ApiResponse,
+  ClientResponse,
+} from "@/interface/response.interface";
 import { instance } from "@/libs/axios";
 import { Button, Chip, Tooltip, Image } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -53,7 +56,11 @@ export default function ClientListPage() {
               },
             }) => (
               <div className="w-16 h-16 rounded-lg overflow-hidden bg-white flex items-center justify-center p-1">
-                <Image src={url} alt="Logo" className="max-w-full max-h-full object-contain" />
+                <Image
+                  src={url}
+                  alt="Logo"
+                  className="max-w-full max-h-full object-contain"
+                />
               </div>
             ),
           },
@@ -104,7 +111,7 @@ export default function ClientListPage() {
                     color="primary"
                     isIconOnly
                     onPress={() =>
-                      navigate(`/client/editar/${row.original._id}`)
+                      navigate(`/client/editar/${row.original.clientId}`)
                     }
                   >
                     <LuPen />

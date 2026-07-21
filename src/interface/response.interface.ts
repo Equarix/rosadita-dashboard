@@ -102,6 +102,7 @@ export interface ClientResponse {
   _id: string;
   name: string;
   url: string;
+  clientId: number;
   isActive: boolean;
   feature: boolean;
   __v?: number;
