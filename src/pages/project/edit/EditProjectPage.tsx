@@ -83,6 +83,9 @@ export default function EditProjectPage() {
     watch,
   } = methods;
 
+
+  console.log(errors)
+
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "components",
