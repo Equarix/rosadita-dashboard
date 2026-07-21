@@ -13,6 +13,8 @@ export const ProjectSchema = z.object({
   technologies: z
     .array(z.string().min(1, "La tecnología no puede estar vacía"))
     .min(1, "Debe agregar al menos una tecnología"),
+
+  feature: z.boolean().default(false),
 });
 
 export type ProjectInput = z.infer<typeof ProjectSchema>;

@@ -55,6 +55,19 @@ export const SideBarConfig: SideBarConfigProps = {
       ],
     },
     {
+      label: "Clientes",
+      href: "",
+      icon: <LuUser />,
+      children: [
+        {
+          href: "/client",
+          icon: <LuGrid2X2Plus />,
+          label: "Listar Clientes",
+          children: [],
+        },
+      ],
+    },
+    {
       href: "/galery",
       icon: <TbPhoto />,
       label: "Galería",

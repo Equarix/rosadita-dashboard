@@ -22,6 +22,7 @@ import {
   SelectItem,
   Textarea,
   useDisclosure,
+  Checkbox,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -157,6 +158,7 @@ export default function EditProjectPage() {
         description: project.description,
         components: project.components as any,
         technologies: project.technologies || [],
+        feature: project.feature || false,
       });
 
       if (project.image) {
@@ -215,13 +217,31 @@ export default function EditProjectPage() {
           className="flex flex-col gap-4 bg-default-50 p-6 rounded-lg"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Nombre del Proyecto"
-              {...register("projectName")}
-              errorMessage={errors.projectName?.message}
-              labelPlacement="outside"
-              placeholder="Ingrese el nombre"
-            />
+            <div className="flex flex-col gap-4">
+              <Input
+                label="Nombre del Proyecto"
+                {...register("projectName")}
+                errorMessage={errors.projectName?.message}
+                labelPlacement="outside"
+                placeholder="Ingrese el nombre"
+              />
+
+              <div className="flex gap-4 mt-2">
+                <Controller
+                  control={control}
+                  name="feature"
+                  render={({ field: { value, onChange, name } }) => (
+                    <Checkbox
+                      isSelected={value}
+                      onValueChange={onChange}
+                      name={name}
+                    >
+                      ¿Destacado?
+                    </Checkbox>
+                  )}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

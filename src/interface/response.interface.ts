@@ -93,6 +93,16 @@ export interface ResponseProject {
   projectId: number;
   __v: number;
   status: boolean;
+  feature: boolean;
   components: Component[];
   technologies: string[];
+}
+
+export interface ClientResponse {
+  _id: string;
+  name: string;
+  url: string;
+  isActive: boolean;
+  feature: boolean;
+  __v?: number;
 }

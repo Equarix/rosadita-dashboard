@@ -189,11 +189,11 @@ export default function CreateProjectPage() {
                 placeholder="Ingrese el nombre"
               />
 
-              <Controller
-                control={control}
-                name="isPage"
-                render={({ field: { value, onChange, name } }) => (
-                  <div className="mt-2">
+              <div className="flex gap-4 mt-2">
+                <Controller
+                  control={control}
+                  name="isPage"
+                  render={({ field: { value, onChange, name } }) => (
                     <Checkbox
                       isSelected={value}
                       onValueChange={onChange}
@@ -201,9 +201,23 @@ export default function CreateProjectPage() {
                     >
                       ¿Es una página?
                     </Checkbox>
-                  </div>
-                )}
-              />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="feature"
+                  render={({ field: { value, onChange, name } }) => (
+                    <Checkbox
+                      isSelected={value}
+                      onValueChange={onChange}
+                      name={name}
+                    >
+                      ¿Destacado?
+                    </Checkbox>
+                  )}
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-2 row-span-2">
