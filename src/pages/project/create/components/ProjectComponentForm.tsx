@@ -41,7 +41,25 @@ export const ProjectComponentForm = ({
     formState: { errors },
   } = useFormContext();
   const type = watch(`components.${index}.type`);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const componentNames: Record<string, string> = {
+    HERO: "Hero (Héroe)",
+    IMAGE: "Imagen",
+    CODE: "Editor de Código",
+    NEXT_ARTICLE: "Siguiente Artículo",
+    TIME_LINE: "Línea de Tiempo",
+    DETAILS: "Detalles",
+    QUOTE: "Cita / Quote",
+    TEXT: "Texto Enriquecido",
+    IMAGE_CAPTION: "Imágenes con Caption",
+    QUESTIONS: "Preguntas Frecuentes",
+    STATS: "Estadísticas",
+    HEADER: "Header (Encabezado)",
+    TESTIMONIALS: "Testimonios",
+    CARROUSEL: "Carrusel",
+    UNKNOWN: "Desconocido",
+  };
 
   const {
     fields: detailFields,
@@ -97,6 +115,14 @@ export const ProjectComponentForm = ({
   } = useFieldArray({
     control,
     name: `components.${index}.testimonialsComponent.testimonials`,
+  });
+  const {
+    fields: carrouselUrlFields,
+    append: appendCarrouselUrl,
+    remove: removeCarrouselUrl,
+  } = useFieldArray({
+    control,
+    name: `components.${index}.carrouselComponent.urls`,
   });
 
   // Helper to get error message safely
@@ -830,6 +856,41 @@ export const ProjectComponentForm = ({
     );
   };
 
+  const renderCarrouselFields = () => {
+    return (
+      <div className="flex flex-col gap-3">
+        <Input
+          label="Título"
+          {...register(`components.${index}.carrouselComponent.title`)}
+          errorMessage={getError("carrouselComponent.title") as string}
+        />
+        <Input
+          label="Subtítulo"
+          {...register(`components.${index}.carrouselComponent.subtitle`)}
+          errorMessage={getError("carrouselComponent.subtitle") as string}
+        />
+        <Textarea
+          label="Descripción"
+          {...register(`components.${index}.carrouselComponent.description`)}
+          errorMessage={getError("carrouselComponent.description") as string}
+        />
+        
+        <h4 className="text-sm font-semibold mt-2">URLs de las imágenes (Ej. logos)</h4>
+        {carrouselUrlFields.map((field, k) => (
+          <div key={field.id} className="flex gap-2 items-center border-l-2 pl-2">
+            <div className="flex flex-col gap-2 flex-1">
+              <Input label={`URL ${k + 1}`} {...register(`components.${index}.carrouselComponent.urls.${k}` as const)} />
+            </div>
+            <Button isIconOnly color="danger" variant="light" onPress={() => removeCarrouselUrl(k)}>
+              <LuTrash />
+            </Button>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendCarrouselUrl("")}>Agregar URL</Button>
+      </div>
+    );
+  };
+
   return (
     <Card className="mb-4 border border-default-200">
       <CardBody>
@@ -844,7 +905,7 @@ export const ProjectComponentForm = ({
             >
               <LuGripVertical className="text-default-400" size={20} />
             </Button>
-            <div className="font-bold text-primary">{type} Component</div>
+            <div className="font-bold text-primary">{componentNames[type] || type}</div>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -882,6 +943,7 @@ export const ProjectComponentForm = ({
                 {type === "IMAGE_CAPTION" && renderImageCaptionFields()}
                 {type === "HEADER" && renderHeaderFields()}
                 {type === "TESTIMONIALS" && renderTestimonialsFields()}
+                {type === "CARROUSEL" && renderCarrouselFields()}
               </div>
             </Tab>
             <Tab key="settings" title="Ajustes">

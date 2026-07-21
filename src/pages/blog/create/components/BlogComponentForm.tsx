@@ -41,7 +41,25 @@ export const BlogComponentForm = ({
     formState: { errors },
   } = useFormContext();
   const type = watch(`components.${index}.type`);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const componentNames: Record<string, string> = {
+    HERO: "Hero (Héroe)",
+    IMAGE: "Imagen",
+    CODE: "Editor de Código",
+    NEXT_ARTICLE: "Siguiente Artículo",
+    TIME_LINE: "Línea de Tiempo",
+    DETAILS: "Detalles",
+    QUOTE: "Cita / Quote",
+    TEXT: "Texto Enriquecido",
+    IMAGE_CAPTION: "Imágenes con Caption",
+    QUESTIONS: "Preguntas Frecuentes",
+    STATS: "Estadísticas",
+    HEADER: "Header (Encabezado)",
+    TESTIMONIALS: "Testimonios",
+    CARROUSEL: "Carrusel",
+    UNKNOWN: "Desconocido",
+  };
 
   const {
     fields: detailFields,
@@ -97,6 +115,14 @@ export const BlogComponentForm = ({
   } = useFieldArray({
     control,
     name: `components.${index}.testimonialsComponent.testimonials`,
+  });
+  const {
+    fields: carrouselUrlFields,
+    append: appendCarrouselUrl,
+    remove: removeCarrouselUrl,
+  } = useFieldArray({
+    control,
+    name: `components.${index}.carrouselComponent.urls`,
   });
 
   // Helper to get error message safely
@@ -831,6 +857,41 @@ export const BlogComponentForm = ({
     );
   };
 
+  const renderCarrouselFields = () => {
+    return (
+      <div className="flex flex-col gap-3">
+        <Input
+          label="Título"
+          {...register(`components.${index}.carrouselComponent.title`)}
+          errorMessage={getError("carrouselComponent.title") as string}
+        />
+        <Input
+          label="Subtítulo"
+          {...register(`components.${index}.carrouselComponent.subtitle`)}
+          errorMessage={getError("carrouselComponent.subtitle") as string}
+        />
+        <Textarea
+          label="Descripción"
+          {...register(`components.${index}.carrouselComponent.description`)}
+          errorMessage={getError("carrouselComponent.description") as string}
+        />
+        
+        <h4 className="text-sm font-semibold mt-2">URLs de las imágenes (Ej. logos)</h4>
+        {carrouselUrlFields.map((field, k) => (
+          <div key={field.id} className="flex gap-2 items-center border-l-2 pl-2">
+            <div className="flex flex-col gap-2 flex-1">
+              <Input label={`URL ${k + 1}`} {...register(`components.${index}.carrouselComponent.urls.${k}` as const)} />
+            </div>
+            <Button isIconOnly color="danger" variant="light" onPress={() => removeCarrouselUrl(k)}>
+              <LuTrash />
+            </Button>
+          </div>
+        ))}
+        <Button size="sm" onPress={() => appendCarrouselUrl("")}>Agregar URL</Button>
+      </div>
+    );
+  };
+
   return (
     <Card className="mb-4 border border-default-200">
       <CardBody>
@@ -845,7 +906,7 @@ export const BlogComponentForm = ({
             >
               <LuGripVertical className="text-default-400" size={20} />
             </Button>
-            <div className="font-bold text-primary">{type} Component</div>
+            <div className="font-bold text-primary">{componentNames[type] || type}</div>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -870,19 +931,25 @@ export const BlogComponentForm = ({
           <Tabs aria-label="Component options">
             <Tab key="content" title="Contenido">
               <div className="pt-2">
-                {type === "HERO" && renderHeroFields()}
-                {type === "IMAGE" && renderImageFields()}
-                {type === "CODE" && renderCodeFields()}
-                {type === "NEXT_ARTICLE" && renderNextArticleFields()}
-                {type === "DETAILS" && renderDetailsFields()}
-                {type === "TIME_LINE" && renderTimeLineFields()}
-                {type === "QUOTE" && renderQuoteFields()}
-                {type === "TEXT" && renderTextFields()}
-                {type === "QUESTIONS" && renderQuestionsFields()}
-                {type === "STATS" && renderStatsFields()}
-                {type === "IMAGE_CAPTION" && renderImageCaptionFields()}
-                {type === "HEADER" && renderHeaderFields()}
-                {type === "TESTIMONIALS" && renderTestimonialsFields()}
+                {(() => {
+                  switch (type) {
+                    case "HERO": return renderHeroFields();
+                    case "IMAGE": return renderImageFields();
+                    case "CODE": return renderCodeFields();
+                    case "NEXT_ARTICLE": return renderNextArticleFields();
+                    case "DETAILS": return renderDetailsFields();
+                    case "TIME_LINE": return renderTimeLineFields();
+                    case "QUOTE": return renderQuoteFields();
+                    case "TEXT": return renderTextFields();
+                    case "QUESTIONS": return renderQuestionsFields();
+                    case "STATS": return renderStatsFields();
+                    case "IMAGE_CAPTION": return renderImageCaptionFields();
+                    case "HEADER": return renderHeaderFields();
+                    case "TESTIMONIALS": return renderTestimonialsFields();
+                    case "CARROUSEL": return renderCarrouselFields();
+                    default: return <div>Seleccione un tipo de componente válido.</div>;
+                  }
+                })()}
               </div>
             </Tab>
             <Tab key="settings" title="Ajustes">

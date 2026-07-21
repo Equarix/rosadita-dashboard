@@ -10,6 +10,7 @@ export interface Component {
   detailsComponent?: DetailsComponent[];
   quoteComponent?: QuoteComponent;
   testimonialsComponent?: TestimonialsComponent;
+  carrouselComponent?: CarrouselComponent;
 }
 
 export interface HeroComponent {
@@ -76,6 +77,13 @@ export interface TestimonialsComponent {
   testimonials: TestimonialItem[];
 }
 
+export interface CarrouselComponent {
+  title: string;
+  subtitle: string;
+  description: string;
+  urls: string[];
+}
+
 export type ComponentType =
   | "HERO"
   | "IMAGE"
@@ -90,6 +98,7 @@ export type ComponentType =
   | "STATS"
   | "HEADER"
   | "TESTIMONIALS"
+  | "CARROUSEL"
   | "UNKNOWN";
 
 export type LanguageType =

@@ -23,6 +23,7 @@ export const ComponentTypeEnum = z.enum([
   "STATS",
   "HEADER",
   "TESTIMONIALS",
+  "CARROUSEL",
   "UNKNOWN",
 ]);
 export const LanguageTypeEnum = z.enum([
@@ -143,6 +144,13 @@ const TestimonialsComponentSchema = z.object({
     .min(1, "Al menos un testimonio requerido"),
 });
 
+const CarrouselComponentSchema = z.object({
+  title: z.string().min(1, "Título requerido"),
+  subtitle: z.string().min(1, "Subtítulo requerido"),
+  description: z.string().min(1, "Descripción requerida"),
+  urls: z.array(z.string().url("URL de imagen inválida")).min(1, "Al menos una URL requerida"),
+});
+
 const HeaderButtonComponentSchema = z
   .object({
     name: z.string().min(1, "Nombre requerido"),
@@ -194,6 +202,7 @@ const BaseComponentSchema = z.object({
   statsComponent: z.array(StatsComponentSchema).optional(),
   headerComponent: HeaderComponentSchema.optional(),
   testimonialsComponent: TestimonialsComponentSchema.optional(),
+  carrouselComponent: CarrouselComponentSchema.optional(),
 });
 
 const typeToKeyMap: Record<string, string> = {
@@ -210,6 +219,7 @@ const typeToKeyMap: Record<string, string> = {
   STATS: "statsComponent",
   HEADER: "headerComponent",
   TESTIMONIALS: "testimonialsComponent",
+  CARROUSEL: "carrouselComponent",
 };
 
 export const ComponentSchema = z.preprocess((val: any) => {

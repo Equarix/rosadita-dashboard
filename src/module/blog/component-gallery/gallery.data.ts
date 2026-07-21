@@ -220,4 +220,19 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
       },
     },
   },
+  {
+    type: "CARROUSEL",
+    label: "Carrusel",
+    description: "Carrusel de imágenes o logos de clientes.",
+    category: "Media",
+    image: TestimonialComponent, // Or any suitable placeholder
+    defaultValues: {
+      carrouselComponent: {
+        title: "",
+        subtitle: "",
+        description: "",
+        urls: [""],
+      },
+    },
+  },
 ];
