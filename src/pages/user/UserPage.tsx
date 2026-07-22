@@ -31,7 +31,7 @@ export default function UserPage() {
   });
 
   return (
-    <div className="flex flex-col gap-2 w-full h-full text-white">
+    <div className="flex flex-col gap-2 w-full h-full">
       <header className="flex items-center justify-between w-full">
         <h1 className="text-2xl font-semibold">Usuarios</h1>
         <Button

@@ -142,7 +142,7 @@ export default function CreateBlogPage() {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full text-white pb-10">
+    <div className="flex flex-col gap-4 w-full h-full pb-10">
       <Load loading={isPending || isLoadingCategories} />
 
       <header className="flex items-center justify-between w-full">

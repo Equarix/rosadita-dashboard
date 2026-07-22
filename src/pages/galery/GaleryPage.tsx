@@ -97,7 +97,7 @@ export default function GaleryPage() {
   };
 
   return (
-    <div className="flex flex-col gap-2 w-full h-full text-white">
+    <div className="flex flex-col gap-2 w-full h-full">
       <header className="flex items-center justify-between w-full">
         <h1 className="text-2xl font-semibold">Imágenes de la Galería</h1>
         <Button

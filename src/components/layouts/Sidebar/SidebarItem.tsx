@@ -94,8 +94,8 @@ export function SidebarItem({
         className={cn(
           "flex items-center justify-between w-full px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group",
           isPathActive()
-            ? "bg-white text-black shadow-lg"
-            : "text-zinc-400 hover:bg-zinc-800/50 hover:text-white",
+            ? "bg-zinc-900 dark:bg-white text-white dark:text-black shadow-lg"
+            : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-white",
           !isOpen && "px-0 justify-center",
         )}
         to={href}
@@ -120,8 +120,8 @@ export function SidebarItem({
               className={cn(
                 "text-[10px] px-1.5 py-0.5 rounded-full font-bold",
                 typeof badge === "number"
-                  ? "bg-zinc-800 text-zinc-400 w-5 h-5 flex items-center justify-center"
-                  : "bg-zinc-800 text-zinc-400 uppercase tracking-wider",
+                  ? "bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 w-5 h-5 flex items-center justify-center"
+                  : "bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 uppercase tracking-wider",
               )}
             >
               {badge}
@@ -130,7 +130,7 @@ export function SidebarItem({
           {hasPlus && (
             <LuPlus
               size={16}
-              className="text-zinc-500 group-hover:text-zinc-300 transition-colors"
+              className="text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors"
             />
           )}
 
@@ -138,9 +138,9 @@ export function SidebarItem({
             <LuChevronDown
               size={16}
               className={cn(
-                "text-zinc-500 transition-all group-hover:text-zinc-300",
+                "text-zinc-400 dark:text-zinc-500 transition-all group-hover:text-zinc-600 dark:group-hover:text-zinc-300",
                 isOpenSubItems && "rotate-180",
-                isPathActive() && "text-black",
+                isPathActive() && "text-white dark:text-black",
               )}
             />
           )}
@@ -153,7 +153,7 @@ export function SidebarItem({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col pl-4 border-l gap-1 overflow-hidden border-zinc-800"
+            className="flex flex-col pl-4 border-l gap-1 overflow-hidden border-zinc-200 dark:border-zinc-800"
           >
             {children.map((child) => (
               <SidebarItem key={child.href} {...child} isOpen={isOpen} />

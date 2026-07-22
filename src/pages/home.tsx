@@ -73,21 +73,21 @@ export default function Home() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full relative overflow-hidden rounded-3xl bg-gradient-to-br from-zinc-900 to-[#121212] border border-zinc-800 p-8 lg:p-12 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6"
+        className="w-full relative overflow-hidden rounded-3xl bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-[#121212] border border-zinc-200 dark:border-zinc-800 p-8 lg:p-12 shadow-xl dark:shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6"
       >
         {/* Background Decorative Blur */}
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-secondary/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col gap-2">
-          <h1 className="text-3xl lg:text-5xl font-bold tracking-tight text-white">
+          <h1 className="text-3xl lg:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
             ¡Hola,{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
               {user?.fullName || user?.username || "Equipo"}
             </span>
             ! 👋
           </h1>
-          <p className="text-zinc-400 text-lg mt-2 max-w-xl">
+          <p className="text-zinc-600 dark:text-zinc-400 text-lg mt-2 max-w-xl">
             Bienvenido de nuevo al panel de administración. ¿Qué te gustaría
             hacer hoy? Aquí tienes accesos rápidos a las secciones más
             importantes.
@@ -97,7 +97,7 @@ export default function Home() {
         <div className="relative z-10 hidden md:block">
           <Avatar
             src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-            className="w-32 h-32 text-large shadow-xl border-4 border-zinc-800"
+            className="w-32 h-32 text-large shadow-xl border-4 border-white dark:border-zinc-800"
             isBordered
             color="primary"
           />
@@ -106,7 +106,7 @@ export default function Home() {
 
       {/* Quick Access Grid */}
       <section className="flex flex-col gap-6">
-        <h2 className="text-2xl font-semibold px-2">Accesos Rápidos</h2>
+        <h2 className="text-2xl font-semibold px-2 text-zinc-900 dark:text-white">Accesos Rápidos</h2>
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -117,7 +117,7 @@ export default function Home() {
             <motion.div key={idx} variants={itemVariants}>
               <Card
                 isPressable
-                className="w-full h-full bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-colors group"
+                className="w-full h-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group shadow-sm"
                 onPress={() => navigate(shortcut.path)}
               >
                 <CardBody className="p-6 flex flex-col gap-4">
@@ -127,12 +127,12 @@ export default function Home() {
                     {shortcut.icon}
                   </div>
                   <div className="flex flex-col gap-1">
-                    <h3 className="text-lg font-semibold">{shortcut.title}</h3>
-                    <p className="text-sm text-zinc-400 leading-relaxed">
+                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">{shortcut.title}</h3>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
                       {shortcut.description}
                     </p>
                   </div>
-                  <div className="mt-auto pt-4 flex items-center text-sm font-medium text-zinc-500 group-hover:text-white transition-colors">
+                  <div className="mt-auto pt-4 flex items-center text-sm font-medium text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
                     Ir a {shortcut.title.toLowerCase()}
                     <LuChevronRight
                       size={16}

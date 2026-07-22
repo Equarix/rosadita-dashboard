@@ -1,20 +1,22 @@
 import { Avatar, Button, ScrollShadow } from "@heroui/react";
-import { LuChevronsLeft } from "react-icons/lu";
+import { LuChevronsLeft, LuSun, LuMoon } from "react-icons/lu";
 import { SideBarConfig } from "@/config/sidebard.config";
 import { SidebarItem } from "./SidebarItem";
 import { HiOutlineMinusCircle } from "react-icons/hi";
 import { cn } from "@/utils/cn";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useAuth } from "@/components/providers/AuthContext";
+import { useTheme } from "@/hooks/useTheme";
 
 export function Sidebar() {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useLocalStorage("sidebar-is-open", true);
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <aside
       className={cn(
-        "h-screen transition-all duration-300 ease-in-out sticky top-0 left-0 bg-[#121212] border-r border-zinc-800 flex flex-col p-4 text-white z-50",
+        "h-screen transition-all duration-300 ease-in-out sticky top-0 left-0 bg-white dark:bg-[#121212] border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-4 text-zinc-900 dark:text-white z-50",
         isOpen ? "w-72" : "w-20",
       )}
     >
@@ -78,6 +80,14 @@ export function Sidebar() {
                 {user?.role}
               </span>
             </div>
+            <Button
+              isIconOnly
+              variant="light"
+              onPress={toggleTheme}
+              className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+            >
+              {theme === "dark" ? <LuSun size={18} /> : <LuMoon size={18} />}
+            </Button>
           </div>
         )}
       </div>
@@ -98,7 +108,7 @@ export function Sidebar() {
         ))}
         <button
           className={cn(
-            "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer group text-zinc-500 hover:bg-zinc-800/50 hover:text-danger",
+            "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer group text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-danger dark:hover:text-danger",
             !isOpen && "justify-center px-0",
           )}
           onClick={() => {
