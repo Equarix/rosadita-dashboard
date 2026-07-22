@@ -13,10 +13,17 @@ import {
   SelectItem,
   addToast,
   Chip,
-  Button
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure
 } from "@heroui/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { LuTrash2 } from "react-icons/lu";
+import { LuTrash2, LuEye } from "react-icons/lu";
+import { useState } from "react";
 
 const CONTACT_STATUS_OPTIONS = [
   { key: "pending", label: "Pendiente", color: "warning" as const },
@@ -29,6 +36,8 @@ const CONTACT_STATUS_OPTIONS = [
 export default function ContactPage() {
   const { token } = useAuth();
   const queryClient = useQueryClient();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedContact, setSelectedContact] = useState<ContactResponse | null>(null);
 
   const { isLoading, data } = useQuery<ApiResponse<ContactResponse[]>>({
     queryKey: ["contacts"],
@@ -82,6 +91,11 @@ export default function ContactPage() {
     if (confirm("¿Estás seguro de eliminar este contacto?")) {
       deleteMutation.mutate(id);
     }
+  };
+
+  const handleView = (contact: ContactResponse) => {
+    setSelectedContact(contact);
+    onOpen();
   };
 
   const getStatusColor = (statusKey: string) => {
@@ -155,7 +169,16 @@ export default function ContactPage() {
                   </Select>
                 </TableCell>
                 <TableCell>
-                  <div className="flex justify-center">
+                  <div className="flex justify-center gap-2">
+                    <Button
+                      isIconOnly
+                      color="primary"
+                      variant="light"
+                      size="sm"
+                      onPress={() => handleView(contact)}
+                    >
+                      <LuEye size={18} />
+                    </Button>
                     <Button
                       isIconOnly
                       color="danger"
@@ -172,6 +195,55 @@ export default function ContactPage() {
           </TableBody>
         </Table>
       )}
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl" scrollBehavior="inside">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Detalles del Contacto
+              </ModalHeader>
+              <ModalBody>
+                {selectedContact && (
+                  <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-default-500 font-semibold">Nombre Completo</p>
+                        <p className="text-base">{selectedContact.fullName}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-default-500 font-semibold">Fecha</p>
+                        <p className="text-base">{new Date(selectedContact.createdAt).toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-default-500 font-semibold">Email</p>
+                        <p className="text-base">{selectedContact.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-default-500 font-semibold">Teléfono</p>
+                        <p className="text-base">{selectedContact.phone}</p>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-sm text-default-500 font-semibold">Asunto</p>
+                      <p className="text-base break-words font-medium">{selectedContact.assunto}</p>
+                    </div>
+                    <div className="mt-2 bg-default-100 p-4 rounded-lg">
+                      <p className="text-sm text-default-500 font-semibold mb-2">Mensaje</p>
+                      <p className="text-base whitespace-pre-wrap break-words">{selectedContact.message}</p>
+                    </div>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

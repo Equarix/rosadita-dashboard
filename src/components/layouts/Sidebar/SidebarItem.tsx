@@ -21,6 +21,17 @@ export interface SidebarItemProps {
   roles?: string[];
 }
 
+import { SideBarConfig } from "@/config/sidebard.config";
+
+const getAllHrefs = (items: SidebarItemProps[]): string[] => {
+  let hrefs: string[] = [];
+  items.forEach((item) => {
+    if (item.href) hrefs.push(item.href);
+    if (item.children) hrefs = hrefs.concat(getAllHrefs(item.children));
+  });
+  return hrefs;
+};
+
 export function SidebarItem({
   icon: Icon,
   label,
@@ -38,7 +49,22 @@ export function SidebarItem({
   const checkIsActive = (itemHref: string) => {
     if (itemHref === "/") return pathname === "/";
     if (!itemHref) return false;
-    return pathname === itemHref || pathname.startsWith(`${itemHref}/`);
+
+    // Get all known hrefs from config
+    const allKnownHrefs = [
+      ...getAllHrefs(SideBarConfig.body),
+      ...getAllHrefs(SideBarConfig.footer),
+    ].filter(Boolean);
+
+    // Find all hrefs that match the current pathname
+    const matchingHrefs = allKnownHrefs.filter(
+      (knownHref) => pathname === knownHref || pathname.startsWith(`${knownHref}/`)
+    );
+
+    // The active href is the most specific (longest) match
+    const activeHref = matchingHrefs.reduce((a, b) => (a.length > b.length ? a : b), "");
+
+    return itemHref === activeHref;
   };
 
   const hasActiveChild = (items: SidebarItemProps[]): boolean => {
