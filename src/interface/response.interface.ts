@@ -13,6 +13,7 @@ export interface AuthResponse {
   password: string;
   role: string;
   userId: number;
+  fullName: string;
   __v: number;
   token: string;
 }
@@ -121,4 +122,3 @@ export interface ContactResponse {
   contactId: number;
   __v: number;
 }
-

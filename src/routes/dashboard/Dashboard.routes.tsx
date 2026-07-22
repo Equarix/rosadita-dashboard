@@ -6,11 +6,12 @@ import GaleryPage from "@/pages/galery/GaleryPage";
 import ContactPage from "@/pages/contact/ContactPage";
 import AdminRoute from "@/components/shared/admin-route/AdminRoute";
 import UserPage from "@/pages/user/UserPage";
+import Home from "@/pages/home";
 
 export default function DashboardRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<h1>Inicio dashboard</h1>} />
+      <Route path="/" element={<Home />} />
       <Route path="blog/*" element={<BlogRoute />} />
       <Route path="project/*" element={<ProjectRoute />} />
       <Route path="client/*" element={<ClientRoute />} />
