@@ -21,6 +21,7 @@ import {
 import { cn } from "@/utils/cn";
 import { listColor } from "@/utils/listColor";
 import InputIcon from "@/components/shared/input/InputIcon";
+import InputImage from "@/components/shared/input/InputImage";
 import TiptapEditor from "@/components/shared/editor/TiptapEditor";
 
 interface BlogComponentFormProps {
@@ -175,9 +176,10 @@ export const BlogComponentForm = ({
           )}
         </Select>
       </div>
-      <Input
+      <InputImage
         label="Imagen URL"
-        {...register(`components.${index}.heroComponent.image`)}
+        value={watch(`components.${index}.heroComponent.image`) || ""}
+        onChange={(val) => setValue(`components.${index}.heroComponent.image`, val)}
         errorMessage={getError("heroComponent.image") as string}
       />
       <div className="flex gap-2">
@@ -200,9 +202,10 @@ export const BlogComponentForm = ({
 
   const renderImageFields = () => (
     <div className="flex flex-col gap-3">
-      <Input
+      <InputImage
         label="Imagen URL"
-        {...register(`components.${index}.imageComponent.url`)}
+        value={watch(`components.${index}.imageComponent.url`) || ""}
+        onChange={(val) => setValue(`components.${index}.imageComponent.url`, val)}
         errorMessage={getError("imageComponent.url") as string}
       />
       <Select
@@ -412,9 +415,10 @@ export const BlogComponentForm = ({
         {...register(`components.${index}.quoteComponent.userPosition`)}
         errorMessage={getError("quoteComponent.userPosition") as string}
       />
-      <Input
+      <InputImage
         label="Imagen Usuario URL"
-        {...register(`components.${index}.quoteComponent.userImage`)}
+        value={watch(`components.${index}.quoteComponent.userImage`) || ""}
+        onChange={(val) => setValue(`components.${index}.quoteComponent.userImage`, val)}
         errorMessage={getError("quoteComponent.userImage") as string}
       />
     </div>
@@ -621,11 +625,10 @@ export const BlogComponentForm = ({
                 <LuTrash />
               </Button>
             </div>
-            <Input
+            <InputImage
               label="URL de la Imagen"
-              {...register(
-                `components.${index}.imageCaptionComponent.images.${k}.url`,
-              )}
+              value={watch(`components.${index}.imageCaptionComponent.images.${k}.url`) || ""}
+              onChange={(val) => setValue(`components.${index}.imageCaptionComponent.images.${k}.url`, val)}
             />
             <Input
               label="Caption"

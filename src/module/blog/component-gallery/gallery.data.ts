@@ -12,6 +12,7 @@ import ImageCaptionComponent from "@/assets/images/image-caption-component.png";
 import StatComponent from "@/assets/images/stats-component.png";
 import QuestionComponent from "@/assets/images/questions-component.png";
 import TestimonialComponent from "@/assets/images/testimonial-component.png";
+import CarrouselComponent from "@/assets/images/carrousel-component.png";
 
 export type ComponentCategory = "Layout" | "Media" | "Content" | "Navigation";
 
@@ -225,7 +226,7 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
     label: "Carrusel",
     description: "Carrusel de imágenes o logos de clientes.",
     category: "Media",
-    image: TestimonialComponent, // Or any suitable placeholder
+    image: CarrouselComponent,
     defaultValues: {
       carrouselComponent: {
         title: "",

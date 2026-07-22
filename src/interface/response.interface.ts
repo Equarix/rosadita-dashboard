@@ -107,3 +107,18 @@ export interface ClientResponse {
   feature: boolean;
   __v?: number;
 }
+
+export interface ContactResponse {
+  _id: string;
+  fullName: string;
+  email: string;
+  assunto: string;
+  phone: string;
+  message: string;
+  status: boolean;
+  contactStatus: string;
+  createdAt: string;
+  contactId: number;
+  __v: number;
+}
+
