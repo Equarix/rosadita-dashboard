@@ -106,6 +106,7 @@ export default function EditBlogPage() {
       });
       return res.data;
     },
+    refetchOnWindowFocus: false,
     enabled: !!blogId,
   });
 
@@ -121,6 +122,7 @@ export default function EditBlogPage() {
       });
       return res.data;
     },
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -133,7 +135,7 @@ export default function EditBlogPage() {
         categoryId: blog.category?.categoryId,
         imageId: blog.image?.imageId,
         description: blog.description,
-        components: blog.components as any, // Cast to any if structure matches but types are strict
+        components: blog.components, // Cast to any if structure matches but types are strict
       });
 
       if (blog.image) {
@@ -170,7 +172,7 @@ export default function EditBlogPage() {
     append({
       type: type as unknown,
       ...(defaultValues as Record<string, unknown>),
-    } as any);
+    });
   };
 
   const handleImageSelect = (image: ImageResponse) => {

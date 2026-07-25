@@ -6,7 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Providers from "./components/providers/Providers.tsx";
 import AuthProvider from "./components/providers/AuthContext.tsx";
 
-const query = new QueryClient();
+const query = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,5 +23,5 @@ createRoot(document.getElementById("root")!).render(
         </AuthProvider>
       </QueryClientProvider>
     </Providers>
-  </StrictMode>
+  </StrictMode>,
 );
