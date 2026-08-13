@@ -185,7 +185,7 @@ export default function TiptapEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg max-w-none focus:outline-none min-h-[150px] p-4 text-foreground dark:prose-invert",
+          "tiptap tiptap-content prose prose-sm max-w-none focus:outline-none min-h-[150px] p-4 text-foreground dark:prose-invert",
       },
     },
   });

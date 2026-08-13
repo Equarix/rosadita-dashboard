@@ -195,6 +195,7 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
         proyectName: "",
         proyectIcon: "",
         isFixed: true,
+        type: "type_one",
         buttons: [{ name: "", link: "", key: "", isExternal: false }],
         items: [{ name: "", key: "" }],
       },

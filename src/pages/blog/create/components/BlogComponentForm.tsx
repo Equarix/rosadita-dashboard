@@ -675,6 +675,23 @@ export const BlogComponentForm = ({
           {...register(`components.${index}.headerComponent.proyectIcon`)}
           errorMessage={getError("headerComponent.proyectIcon") as string}
         />
+        <Select
+          label="Tipo de Encabezado"
+          selectedKeys={[
+            watch(`components.${index}.headerComponent.type`) || "type_one",
+          ]}
+          onSelectionChange={(keys) => {
+            const val = Array.from(keys)[0] as string;
+            if (val) {
+              setValue(`components.${index}.headerComponent.type`, val);
+            }
+          }}
+          errorMessage={getError("headerComponent.type") as string}
+        >
+          <SelectItem key="type_one">Tipo 1</SelectItem>
+          <SelectItem key="type_two">Tipo 2</SelectItem>
+        </Select>
+
         <Switch
           isSelected={
             watch(`components.${index}.headerComponent.isFixed`) || false

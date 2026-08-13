@@ -36,6 +36,8 @@ export const LanguageTypeEnum = z.enum([
   "SQL",
 ]);
 
+export const TypeHeaderEnum = z.enum(["type_one", "type_two"]);
+
 // Sub-component Schemas
 const SpanSchema = z.object({
   text: z.string().min(1, "Texto requerido"),
@@ -180,6 +182,7 @@ const HeaderComponentSchema = z.object({
   proyectName: z.string().min(1, "Nombre de proyecto requerido"),
   proyectIcon: z.string().url("URL de icono inválida"),
   isFixed: z.boolean(),
+  type: TypeHeaderEnum.default("type_one"),
   buttons: z.array(HeaderButtonComponentSchema).optional(),
   items: z
     .array(HeaderItemComponentSchema)
