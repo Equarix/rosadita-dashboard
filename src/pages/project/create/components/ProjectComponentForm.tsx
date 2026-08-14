@@ -669,9 +669,10 @@ export const ProjectComponentForm = ({
           {...register(`components.${index}.headerComponent.proyectName`)}
           errorMessage={getError("headerComponent.proyectName") as string}
         />
-        <Input
+        <InputImage
           label="Icono del Proyecto (URL)"
-          {...register(`components.${index}.headerComponent.proyectIcon`)}
+          value={watch(`components.${index}.headerComponent.proyectIcon`) || ""}
+          onChange={(val) => setValue(`components.${index}.headerComponent.proyectIcon`, val)}
           errorMessage={getError("headerComponent.proyectIcon") as string}
         />
         <Select
@@ -899,7 +900,11 @@ export const ProjectComponentForm = ({
         {carrouselUrlFields.map((field, k) => (
           <div key={field.id} className="flex gap-2 items-center border-l-2 pl-2">
             <div className="flex flex-col gap-2 flex-1">
-              <Input label={`URL ${k + 1}`} {...register(`components.${index}.carrouselComponent.urls.${k}` as const)} />
+              <InputImage
+                label={`URL ${k + 1}`}
+                value={watch(`components.${index}.carrouselComponent.urls.${k}`) || ""}
+                onChange={(val) => setValue(`components.${index}.carrouselComponent.urls.${k}`, val)}
+              />
             </div>
             <Button isIconOnly color="danger" variant="light" onPress={() => removeCarrouselUrl(k)}>
               <LuTrash />
