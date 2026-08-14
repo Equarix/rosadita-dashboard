@@ -687,8 +687,8 @@ export const ProjectComponentForm = ({
           }}
           errorMessage={getError("headerComponent.type") as string}
         >
-          <SelectItem key="type_one">Tipo 1</SelectItem>
-          <SelectItem key="type_two">Tipo 2</SelectItem>
+          <SelectItem key="type_one">Tipo 1 (Estándar)</SelectItem>
+          <SelectItem key="type_two">Tipo 2 (Transparente en la parte superior)</SelectItem>
         </Select>
 
         <Switch
