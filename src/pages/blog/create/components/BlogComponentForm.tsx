@@ -97,6 +97,7 @@ export const BlogComponentForm = ({
     fields: btnFields,
     append: appendBtn,
     remove: removeBtn,
+    move: moveBtn,
   } = useFieldArray({
     control,
     name: `components.${index}.headerComponent.buttons`,
@@ -105,6 +106,7 @@ export const BlogComponentForm = ({
     fields: headerItemFields,
     append: appendHeaderItem,
     remove: removeHeaderItem,
+    move: moveHeaderItem,
   } = useFieldArray({
     control,
     name: `components.${index}.headerComponent.items`,
@@ -710,6 +712,28 @@ export const BlogComponentForm = ({
             key={field.id}
             className="flex gap-2 items-center border-l-2 pl-2"
           >
+            <div className="flex flex-col gap-1">
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                isDisabled={k === 0}
+                onPress={() => moveBtn(k, k - 1)}
+                title="Mover arriba"
+              >
+                <LuChevronUp />
+              </Button>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                isDisabled={k === btnFields.length - 1}
+                onPress={() => moveBtn(k, k + 1)}
+                title="Mover abajo"
+              >
+                <LuChevronDown />
+              </Button>
+            </div>
             <div className="flex flex-col gap-2 flex-1">
               <Input
                 label="Nombre"
@@ -770,6 +794,28 @@ export const BlogComponentForm = ({
             key={field.id}
             className="flex gap-2 items-center border-l-2 pl-2"
           >
+            <div className="flex flex-col gap-1">
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                isDisabled={k === 0}
+                onPress={() => moveHeaderItem(k, k - 1)}
+                title="Mover arriba"
+              >
+                <LuChevronUp />
+              </Button>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                isDisabled={k === headerItemFields.length - 1}
+                onPress={() => moveHeaderItem(k, k + 1)}
+                title="Mover abajo"
+              >
+                <LuChevronDown />
+              </Button>
+            </div>
             <div className="flex flex-col gap-2 flex-1">
               <Input
                 label="Nombre"
