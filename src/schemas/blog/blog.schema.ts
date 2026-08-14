@@ -24,8 +24,47 @@ export const ComponentTypeEnum = z.enum([
   "HEADER",
   "TESTIMONIALS",
   "CARROUSEL",
+  "TABLE",
   "UNKNOWN",
 ]);
+
+export const ColumnTypeEnum = z.enum([
+  "text",
+  "number",
+  "currency",
+  "date",
+  "boolean",
+  "image",
+  "link",
+]);
+
+export const TableColumnSchema = z.object({
+  id: z.string().min(1, "El ID es requerido"),
+  label: z.string().min(1, "La etiqueta es requerida"),
+  type: ColumnTypeEnum,
+  visible: z.boolean().optional(),
+  autoWidth: z.boolean().default(true).optional(),
+});
+
+export const TableRowSchema = z.object({
+  values: z.record(z.string(), z.unknown()),
+});
+
+export const TableSettingsSchema = z.object({
+  bordered: z.boolean().optional(),
+  striped: z.boolean().optional(),
+  hoverable: z.boolean().optional(),
+  pagination: z.boolean().optional(),
+  pageSize: z.number().optional(),
+});
+
+export const TableComponentSchema = z.object({
+  name: z.string().min(1, "Nombre requerido"),
+  description: z.string().optional(),
+  columns: z.array(TableColumnSchema),
+  rows: z.array(TableRowSchema),
+  settings: TableSettingsSchema.optional(),
+});
 export const LanguageTypeEnum = z.enum([
   "TYPESCRIPT",
   "PYTHON",
@@ -206,6 +245,7 @@ const BaseComponentSchema = z.object({
   headerComponent: HeaderComponentSchema.optional(),
   testimonialsComponent: TestimonialsComponentSchema.optional(),
   carrouselComponent: CarrouselComponentSchema.optional(),
+  tableComponent: TableComponentSchema.optional(),
 });
 
 const typeToKeyMap: Record<string, string> = {
@@ -223,6 +263,7 @@ const typeToKeyMap: Record<string, string> = {
   HEADER: "headerComponent",
   TESTIMONIALS: "testimonialsComponent",
   CARROUSEL: "carrouselComponent",
+  TABLE: "tableComponent",
 };
 
 export const ComponentSchema = z.preprocess((val: any) => {

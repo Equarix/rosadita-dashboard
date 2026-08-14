@@ -11,6 +11,7 @@ export interface Component {
   quoteComponent?: QuoteComponent;
   testimonialsComponent?: TestimonialsComponent;
   carrouselComponent?: CarrouselComponent;
+  tableComponent?: TableComponent;
 }
 
 export interface HeroComponent {
@@ -84,6 +85,34 @@ export interface CarrouselComponent {
   urls: string[];
 }
 
+export interface TableColumn {
+  id: string;
+  label: string;
+  type: string;
+  visible?: boolean;
+  autoWidth?: boolean;
+}
+
+export interface TableRow {
+  values: Record<string, unknown>;
+}
+
+export interface TableSettings {
+  bordered?: boolean;
+  striped?: boolean;
+  hoverable?: boolean;
+  pagination?: boolean;
+  pageSize?: number;
+}
+
+export interface TableComponent {
+  name: string;
+  description?: string;
+  columns: TableColumn[];
+  rows: TableRow[];
+  settings?: TableSettings;
+}
+
 export type ComponentType =
   | "HERO"
   | "IMAGE"
@@ -99,6 +128,7 @@ export type ComponentType =
   | "HEADER"
   | "TESTIMONIALS"
   | "CARROUSEL"
+  | "TABLE"
   | "UNKNOWN";
 
 export type LanguageType =

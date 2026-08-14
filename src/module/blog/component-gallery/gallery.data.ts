@@ -237,4 +237,39 @@ export const COMPONENT_DEFINITIONS: ComponentDefinition[] = [
       },
     },
   },
+  {
+    type: "TABLE",
+    label: "Tabla de Datos",
+    description: "Tabla personalizable con columnas, filas y configuraciones de formato.",
+    category: "Content",
+    image: "https://placehold.co/600x400/png?text=Table+Component",
+    defaultValues: {
+      tableComponent: {
+        name: "",
+        slug: "",
+        columns: [
+          {
+            id: "col_1",
+            label: "Columna 1",
+            type: "text",
+            visible: true,
+          },
+        ],
+        rows: [
+          {
+            values: {
+              col_1: "Dato de ejemplo",
+            },
+          },
+        ],
+        settings: {
+          bordered: true,
+          striped: true,
+          hoverable: true,
+          pagination: true,
+          pageSize: 10,
+        },
+      },
+    },
+  },
 ];

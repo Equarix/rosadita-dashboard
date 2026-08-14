@@ -59,8 +59,27 @@ export const ProjectComponentForm = ({
     HEADER: "Header (Encabezado)",
     TESTIMONIALS: "Testimonios",
     CARROUSEL: "Carrusel",
+    TABLE: "Tabla",
     UNKNOWN: "Desconocido",
   };
+
+  const {
+    fields: tableColumnFields,
+    append: appendTableColumn,
+    remove: removeTableColumn,
+  } = useFieldArray({
+    control,
+    name: `components.${index}.tableComponent.columns`,
+  });
+
+  const {
+    fields: tableRowFields,
+    append: appendTableRow,
+    remove: removeTableRow,
+  } = useFieldArray({
+    control,
+    name: `components.${index}.tableComponent.rows`,
+  });
 
   const {
     fields: detailFields,
@@ -962,6 +981,254 @@ export const ProjectComponentForm = ({
     );
   };
 
+  const renderTableFields = () => {
+    const columns = (watch(`components.${index}.tableComponent.columns`) || []) as { id: string; label: string; type?: string }[];
+
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Input
+            label="Nombre de la Tabla"
+            placeholder="Ej: Tabla Comparativa"
+            {...register(`components.${index}.tableComponent.name`)}
+            errorMessage={getError("tableComponent.name") as string}
+          />
+          <Input
+            label="Descripción (Opcional)"
+            placeholder="Descripción corta de la tabla"
+            {...register(`components.${index}.tableComponent.description`)}
+            errorMessage={getError("tableComponent.description") as string}
+          />
+        </div>
+
+        {/* EXCEL GRID SIMULATOR */}
+        <div className="border border-default-200 rounded-lg overflow-x-auto bg-background shadow-sm">
+          <table className="w-full text-sm border-collapse min-w-[500px]">
+            <thead>
+              <tr className="bg-default-100 border-b border-default-200">
+                <th className="p-2 text-center text-default-400 font-semibold w-12 border-r border-default-200">
+                  #
+                </th>
+                {tableColumnFields.map((field, k) => (
+                  <th key={field.id} className="p-2 border-r border-default-200 min-w-[200px] align-top bg-default-100/80">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between gap-1">
+                        <Input
+                          size="sm"
+                          placeholder={`Columna ${k + 1}`}
+                          className="font-medium"
+                          {...register(`components.${index}.tableComponent.columns.${k}.label`)}
+                          onChange={(e) => {
+                            const label = e.target.value;
+                            setValue(`components.${index}.tableComponent.columns.${k}.label`, label);
+                            const generatedId = label
+                              .toLowerCase()
+                              .trim()
+                              .replace(/[^a-z0-9]+/g, "_")
+                              .replace(/^_+|_+$/g, "") || `col_${k + 1}`;
+                            setValue(`components.${index}.tableComponent.columns.${k}.id`, generatedId);
+                          }}
+                        />
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          color="danger"
+                          variant="light"
+                          onPress={() => removeTableColumn(k)}
+                          title="Eliminar columna"
+                        >
+                          <LuTrash size={15} />
+                        </Button>
+                      </div>
+                      <Select
+                        size="sm"
+                        aria-label="Tipo de columna"
+                        placeholder="Selecciona tipo"
+                        {...register(`components.${index}.tableComponent.columns.${k}.type`)}
+                        defaultSelectedKeys={[watch(`components.${index}.tableComponent.columns.${k}.type`) || "text"]}
+                      >
+                        {[
+                          { key: "text", label: "Texto" },
+                          { key: "number", label: "Número" },
+                          { key: "currency", label: "Moneda / Precio" },
+                          { key: "date", label: "Fecha" },
+                          { key: "boolean", label: "Booleano (Sí/No)" },
+                          { key: "image", label: "Imagen (URL)" },
+                          { key: "link", label: "Enlace (URL)" },
+                        ].map((c) => (
+                          <SelectItem key={c.key}>{c.label}</SelectItem>
+                        ))}
+                      </Select>
+                      <div className="flex items-center justify-between px-1 pt-1">
+                        <span className="text-[11px] text-default-500 font-normal">Ancho automático</span>
+                        <Switch
+                          size="sm"
+                          isSelected={
+                            watch(`components.${index}.tableComponent.columns.${k}.autoWidth`) ?? true
+                          }
+                          onValueChange={(val) =>
+                            setValue(`components.${index}.tableComponent.columns.${k}.autoWidth`, val)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </th>
+                ))}
+                <th className="p-2 text-center align-middle w-28">
+                  <Button
+                    size="sm"
+                    color="primary"
+                    variant="flat"
+                    className="w-full"
+                    onPress={() => {
+                      const newIdx = tableColumnFields.length + 1;
+                      appendTableColumn({ id: `col_${newIdx}`, label: `Columna ${newIdx}`, type: "text", autoWidth: true });
+                    }}
+                  >
+                    + Columna
+                  </Button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableRowFields.length === 0 ? (
+                <tr>
+                  <td colSpan={tableColumnFields.length + 2} className="p-6 text-center text-default-400 italic">
+                    No hay filas aún. Haz clic en <strong>"+ Agregar Fila"</strong> para ingresar datos.
+                  </td>
+                </tr>
+              ) : (
+                tableRowFields.map((field, rIndex) => (
+                  <tr key={field.id} className="border-b border-default-100 hover:bg-default-50 transition-colors">
+                    <td className="p-2 text-center text-default-400 font-mono text-xs border-r border-default-200 bg-default-50">
+                      {rIndex + 1}
+                    </td>
+                    {columns.map((col, colIdx) => {
+                      const fieldPath = `components.${index}.tableComponent.rows.${rIndex}.values.${col.id || `col_${colIdx + 1}`}`;
+                      const cellValue = watch(fieldPath);
+
+                      const renderCellInput = () => {
+                        switch (col.type) {
+                          case "image":
+                            return (
+                              <InputImage
+                                placeholder="Seleccionar imagen..."
+                                value={cellValue || ""}
+                                onChange={(val) => setValue(fieldPath, val)}
+                              />
+                            );
+                          case "boolean":
+                            return (
+                              <div className="flex justify-center items-center py-1">
+                                <Switch
+                                  size="sm"
+                                  isSelected={Boolean(cellValue)}
+                                  onValueChange={(val) => setValue(fieldPath, val)}
+                                />
+                              </div>
+                            );
+                          case "date":
+                            return (
+                              <Input
+                                size="sm"
+                                type="date"
+                                variant="flat"
+                                value={cellValue || ""}
+                                {...register(fieldPath)}
+                              />
+                            );
+                          case "number":
+                            return (
+                              <Input
+                                size="sm"
+                                type="number"
+                                variant="flat"
+                                placeholder="0"
+                                value={cellValue ?? ""}
+                                {...register(fieldPath)}
+                              />
+                            );
+                          case "currency":
+                            return (
+                              <Input
+                                size="sm"
+                                type="number"
+                                step="0.01"
+                                variant="flat"
+                                startContent={<span className="text-default-400 text-xs">$</span>}
+                                placeholder="0.00"
+                                value={cellValue ?? ""}
+                                {...register(fieldPath)}
+                              />
+                            );
+                          case "link":
+                            return (
+                              <Input
+                                size="sm"
+                                type="url"
+                                variant="flat"
+                                placeholder="https://..."
+                                value={cellValue || ""}
+                                {...register(fieldPath)}
+                              />
+                            );
+                          case "text":
+                          default:
+                            return (
+                              <Input
+                                size="sm"
+                                variant="flat"
+                                placeholder="Texto..."
+                                value={cellValue || ""}
+                                {...register(fieldPath)}
+                              />
+                            );
+                        }
+                      };
+
+                      return (
+                        <td key={col.id || colIdx} className="p-1.5 border-r border-default-200">
+                          {renderCellInput()}
+                        </td>
+                      );
+                    })}
+                    <td className="p-1 text-center align-middle">
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        color="danger"
+                        variant="light"
+                        onPress={() => removeTableRow(rIndex)}
+                        title="Eliminar fila"
+                      >
+                        <LuTrash size={16} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="bg-default-50/50 border-t border-default-200">
+                <td colSpan={tableColumnFields.length + 2} className="p-2">
+                  <Button
+                    size="sm"
+                    color="secondary"
+                    variant="flat"
+                    className="w-full font-medium"
+                    onPress={() => appendTableRow({ values: {} })}
+                  >
+                    + Agregar Fila
+                  </Button>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card className="mb-4 border border-default-200">
       <CardBody>
@@ -1015,6 +1282,7 @@ export const ProjectComponentForm = ({
                 {type === "HEADER" && renderHeaderFields()}
                 {type === "TESTIMONIALS" && renderTestimonialsFields()}
                 {type === "CARROUSEL" && renderCarrouselFields()}
+                {type === "TABLE" && renderTableFields()}
               </div>
             </Tab>
             <Tab key="settings" title="Ajustes">
