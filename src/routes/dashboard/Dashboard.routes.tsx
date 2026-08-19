@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router";
 import BlogRoute from "../blog/blog.route";
 import ProjectRoute from "../project/project.route";
 import ClientRoute from "./Client.routes";
+import CrmRoute from "../crm/crm.route";
 import GaleryPage from "@/pages/galery/GaleryPage";
 import ContactPage from "@/pages/contact/ContactPage";
 import AdminRoute from "@/components/shared/admin-route/AdminRoute";
@@ -15,7 +16,9 @@ export default function DashboardRoutes() {
       <Route path="blog/*" element={<BlogRoute />} />
       <Route path="project/*" element={<ProjectRoute />} />
       <Route path="client/*" element={<ClientRoute />} />
+      <Route path="crm/*" element={<CrmRoute />} />
       <Route path="contact" element={<ContactPage />} />
+
       <Route path="galery" element={<GaleryPage />} />
       <Route
         path="users"

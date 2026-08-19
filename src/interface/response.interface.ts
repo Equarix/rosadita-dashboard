@@ -122,3 +122,57 @@ export interface ContactResponse {
   contactId: number;
   __v: number;
 }
+
+export interface CrmCategoryResponse {
+  categoryEnterpriseId: number;
+  name: string;
+  status: boolean;
+  icon: string;
+  speach?: string | null;
+  createdAt: string;
+}
+
+export interface EnterpriseSchedule {
+  day: string;
+  hours: string;
+}
+
+export interface EnterpriseTracking {
+  trackingId: number;
+  answered: boolean;
+  date: string;
+  channel: string;
+  status: string;
+  notes: string;
+}
+
+export interface EnterpriseResponse {
+  enterpriseId: number;
+  name: string;
+  address: string;
+  street: string;
+  phone: string;
+  reviewCount: number;
+  stars: string;
+  urlGoogleMaps: string;
+  lat: string;
+  lng: string;
+  website: string;
+  schedules: EnterpriseSchedule[];
+  category: CrmCategoryResponse;
+  trackings: EnterpriseTracking[];
+}
+
+export interface PaginationMetadata {
+  totalItems: number;
+  itemCount: number;
+  totalPages: number;
+  currentPage: number | string;
+}
+
+export interface PaginatedApiResponse<T> {
+  body: T;
+  message: string;
+  status: number;
+  metadata: PaginationMetadata;
+}

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
@@ -20,8 +21,9 @@ import {
 
 interface TiptapEditorProps {
   content: any;
-  onChange: (json: any) => void;
+  onChange: (value: any) => void;
   editable?: boolean;
+  outputFormat?: "html" | "json";
 }
 
 const MenuBar = ({ editor }: { editor: any }) => {
@@ -167,6 +169,7 @@ export default function TiptapEditor({
   content,
   onChange,
   editable = true,
+  outputFormat = "json",
 }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -180,7 +183,11 @@ export default function TiptapEditor({
     content: content,
     editable: editable,
     onUpdate: ({ editor }) => {
-      onChange(editor.getJSON());
+      if (outputFormat === "html") {
+        onChange(editor.getHTML());
+      } else {
+        onChange(editor.getJSON());
+      }
     },
     editorProps: {
       attributes: {
@@ -189,6 +196,15 @@ export default function TiptapEditor({
       },
     },
   });
+
+  useEffect(() => {
+    if (editor && content !== undefined) {
+      const currentContent = outputFormat === "html" ? editor.getHTML() : editor.getJSON();
+      if (JSON.stringify(currentContent) !== JSON.stringify(content)) {
+        editor.commands.setContent(content || "");
+      }
+    }
+  }, [content, editor, outputFormat]);
 
   return (
     <div className="border border-default-200 rounded-lg shadow-sm">

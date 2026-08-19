@@ -1,5 +1,12 @@
 import type { SidebarItemProps } from "@/components/layouts/Sidebar/SidebarItem";
-import { LuGrid2X2Plus, LuHouse, LuMail, LuUser } from "react-icons/lu";
+import {
+  LuGrid2X2Plus,
+  LuHouse,
+  LuMail,
+  LuPackagePlus,
+  LuPlus,
+  LuUser,
+} from "react-icons/lu";
 import { TbPhoto } from "react-icons/tb";
 import { RxGithubLogo } from "react-icons/rx";
 
@@ -50,6 +57,38 @@ export const SideBarConfig: SideBarConfigProps = {
           href: "/project/categories",
           icon: <LuGrid2X2Plus />,
           label: "Categorías",
+          children: [],
+        },
+      ],
+    },
+    {
+      label: "CRM",
+      href: "",
+      icon: <LuPackagePlus />,
+      children: [
+        {
+          href: "/crm",
+          icon: <LuPackagePlus />,
+          label: "Empresas",
+          children: [
+            {
+              href: "/crm",
+              icon: <LuPackagePlus />,
+              label: "Listar Empresas",
+              children: [],
+            },
+            {
+              href: "/crm/crear",
+              icon: <LuPlus />,
+              label: "Crear Empresa",
+              children: [],
+            },
+          ],
+        },
+        {
+          href: "/crm/categories",
+          icon: <LuGrid2X2Plus />,
+          label: "Categorias",
           children: [],
         },
       ],
