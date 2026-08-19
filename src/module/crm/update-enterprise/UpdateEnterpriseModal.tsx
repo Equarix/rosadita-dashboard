@@ -371,35 +371,35 @@ export default function UpdateEnterpriseModal({
                               setValue(`schedules.${index}.day`, e.target.value)
                             }
                           >
-                          {DAYS_OF_WEEK.map((d) => (
-                            <SelectItem key={d} textValue={d}>
-                              {d.charAt(0).toUpperCase() + d.slice(1)}
-                            </SelectItem>
-                          ))}
-                        </Select>
-                      </div>
+                            {DAYS_OF_WEEK.map((d) => (
+                              <SelectItem key={d} textValue={d}>
+                                {d.charAt(0).toUpperCase() + d.slice(1)}
+                              </SelectItem>
+                            ))}
+                          </Select>
+                        </div>
 
-                      <div className="flex-1">
-                        <Input
+                        <div className="flex-1">
+                          <Input
+                            size="sm"
+                            placeholder="Ej. 08:00 - 20:00 o Cerrado"
+                            {...register(`schedules.${index}.hours`)}
+                          />
+                        </div>
+
+                        <Button
+                          isIconOnly
                           size="sm"
-                          placeholder="Ej. 08:00 - 20:00 o Cerrado"
-                          {...register(`schedules.${index}.hours`)}
-                        />
+                          color="danger"
+                          variant="light"
+                          onPress={() => remove(index)}
+                        >
+                          <LuTrash className="size-4" />
+                        </Button>
                       </div>
-
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        color="danger"
-                        variant="light"
-                        onPress={() => remove(index)}
-                      >
-                        <LuTrash className="size-4" />
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
               </form>
             </ModalBody>
 
