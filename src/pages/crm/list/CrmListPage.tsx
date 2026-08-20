@@ -93,6 +93,9 @@ export default function CrmListPage() {
     onOpenChange: onOpenChangeUpdateEnterprise,
   } = useDisclosure();
 
+  const [selectedEnterpriseToDelete, setSelectedEnterpriseToDelete] =
+    useState<EnterpriseResponse | null>(null);
+
   const {
     isOpen: isDeleteEnterpriseOpen,
     onOpen: onOpenDeleteEnterprise,
@@ -223,13 +226,25 @@ export default function CrmListPage() {
 
       <AlertDeleteEnterpriseModal
         isOpen={isDeleteEnterpriseOpen}
-        onClose={onOpenChangeDeleteEnterprise}
+        onClose={() => {
+          onOpenChangeDeleteEnterprise();
+          setSelectedEnterpriseToDelete(null);
+        }}
         onSuccess={() => {
-          setSelectedEnterprise(null);
+          if (selectedEnterprise?.enterpriseId === selectedEnterpriseToDelete?.enterpriseId) {
+            setSelectedEnterprise(null);
+          }
+          setSelectedEnterpriseToDelete(null);
           refetch();
         }}
-        enterpriseId={activeEnterprise?.enterpriseId || null}
-        enterpriseName={activeEnterprise?.name}
+        enterpriseId={
+          selectedEnterpriseToDelete?.enterpriseId ||
+          activeEnterprise?.enterpriseId ||
+          null
+        }
+        enterpriseName={
+          selectedEnterpriseToDelete?.name || activeEnterprise?.name
+        }
       />
 
       {activeEnterprise && (
@@ -360,19 +375,36 @@ export default function CrmListPage() {
                     <span className="text-xs font-mono font-semibold text-primary">
                       ID: {item.enterpriseId}
                     </span>
-                    {item.category && (
-                      <Chip
+                    <div className="flex items-center gap-1">
+                      {item.category && (
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          color="primary"
+                          className="text-[10px] h-5 px-1.5"
+                        >
+                          <div className="flex items-center gap-1">
+                            <RenderLuIcon name={item.category.icon} className="size-3" />
+                            <span>{item.category.name}</span>
+                          </div>
+                        </Chip>
+                      )}
+                      <Button
+                        isIconOnly
                         size="sm"
-                        variant="flat"
-                        color="primary"
-                        className="text-[10px] h-5 px-1.5"
+                        variant="light"
+                        color="danger"
+                        className="h-7 w-7 min-w-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedEnterpriseToDelete(item);
+                          onOpenDeleteEnterprise();
+                        }}
+                        aria-label="Eliminar empresa"
                       >
-                        <div className="flex items-center gap-1">
-                          <RenderLuIcon name={item.category.icon} className="size-3" />
-                          <span>{item.category.name}</span>
-                        </div>
-                      </Chip>
-                    )}
+                        <LuTrash2 className="size-4 text-danger" />
+                      </Button>
+                    </div>
                   </div>
 
                   <h4 className="font-bold text-sm text-foreground line-clamp-1">
@@ -506,7 +538,10 @@ export default function CrmListPage() {
                   size="sm"
                   variant="flat"
                   color="danger"
-                  onPress={onOpenDeleteEnterprise}
+                  onPress={() => {
+                    setSelectedEnterpriseToDelete(activeEnterprise);
+                    onOpenDeleteEnterprise();
+                  }}
                   aria-label="Eliminar empresa"
                 >
                   <LuTrash2 className="size-4" />
