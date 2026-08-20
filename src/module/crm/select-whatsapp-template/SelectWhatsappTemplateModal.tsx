@@ -51,21 +51,40 @@ export default function SelectWhatsappTemplateModal({
     }
   };
 
-  // Convert HTML or rich text to plain text for WhatsApp URL preserving line breaks
+  // Convert HTML or rich text to plain text for WhatsApp URL preserving line breaks and emojis
   const formatSpeachText = (text: string) => {
     if (!text) return "";
-    return text
+
+    // Convert HTML line breaks and paragraph ends to newlines
+    const withNewlines = text
       .replace(/<br\s*\/?>/gi, "\n")
       .replace(/<\/p>/gi, "\n\n")
       .replace(/<\/h[1-6]>/gi, "\n\n")
       .replace(/<\/div>/gi, "\n")
-      .replace(/<\/li>/gi, "\n")
-      .replace(/<[^>]*>/g, "")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
+      .replace(/<\/li>/gi, "\n");
+
+    let textContent = "";
+    if (typeof window !== "undefined" && typeof DOMParser !== "undefined") {
+      try {
+        const doc = new DOMParser().parseFromString(withNewlines, "text/html");
+        textContent = doc.body.textContent || "";
+      } catch {
+        textContent = "";
+      }
+    }
+
+    if (!textContent) {
+      textContent = withNewlines
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"');
+    }
+
+    return textContent
+      .replace(/\r\n/g, "\n")
       .replace(/\n\s*\n\s*\n+/g, "\n\n")
       .trim();
   };
