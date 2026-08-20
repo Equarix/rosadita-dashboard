@@ -123,12 +123,18 @@ export interface ContactResponse {
   __v: number;
 }
 
+export interface SpeachItem {
+  speachId?: number;
+  name: string;
+  speach: string;
+}
+
 export interface CrmCategoryResponse {
   categoryEnterpriseId: number;
   name: string;
   status: boolean;
   icon: string;
-  speach?: string | null;
+  speaches: SpeachItem[];
   createdAt: string;
 }
 

@@ -15,6 +15,7 @@ import UpdateTrackingModal from "@/module/crm/update-tracking/UpdateTrackingModa
 import AlertDeleteTrackingModal from "@/module/crm/alert-delete-tracking/AlertDeleteTrackingModal";
 import UpdateEnterpriseModal from "@/module/crm/update-enterprise/UpdateEnterpriseModal";
 import AlertDeleteEnterpriseModal from "@/module/crm/alert-delete-enterprise/AlertDeleteEnterpriseModal";
+import SelectWhatsappTemplateModal from "@/module/crm/select-whatsapp-template/SelectWhatsappTemplateModal";
 import {
   Avatar,
   Button,
@@ -96,6 +97,12 @@ export default function CrmListPage() {
     isOpen: isDeleteEnterpriseOpen,
     onOpen: onOpenDeleteEnterprise,
     onOpenChange: onOpenChangeDeleteEnterprise,
+  } = useDisclosure();
+
+  const {
+    isOpen: isWhatsappOpen,
+    onOpen: onOpenWhatsapp,
+    onOpenChange: onOpenChangeWhatsapp,
   } = useDisclosure();
 
   const getTrackingStatusBadge = (status: string) => {
@@ -224,6 +231,16 @@ export default function CrmListPage() {
         enterpriseId={activeEnterprise?.enterpriseId || null}
         enterpriseName={activeEnterprise?.name}
       />
+
+      {activeEnterprise && (
+        <SelectWhatsappTemplateModal
+          isOpen={isWhatsappOpen}
+          onClose={onOpenChangeWhatsapp}
+          phone={activeEnterprise.phone || ""}
+          enterpriseName={activeEnterprise.name}
+          speaches={activeEnterprise.category?.speaches || []}
+        />
+      )}
 
       {/* LEFT PANEL: Master List */}
       <div className="w-full md:w-80 lg:w-96 flex flex-col gap-3 h-full bg-background border border-default-200/80 rounded-2xl p-3 shrink-0 shadow-sm">
@@ -449,19 +466,10 @@ export default function CrmListPage() {
                 {activeEnterprise.phone && (
                   <>
                     <Button
-                      as="a"
-                      href={`https://wa.me/${activeEnterprise.phone.replace(/[^0-9]/g, "")}${
-                        activeEnterprise.category?.speach
-                          ? `?text=${encodeURIComponent(
-                              activeEnterprise.category.speach.replace(/<[^>]*>/g, "").trim()
-                            )}`
-                          : ""
-                      }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       color="success"
                       variant="solid"
                       size="sm"
+                      onPress={onOpenWhatsapp}
                       className="font-semibold text-white bg-green-600 hover:bg-green-700 flex items-center gap-1.5 shadow-sm"
                     >
                       <FaWhatsapp className="size-4" />

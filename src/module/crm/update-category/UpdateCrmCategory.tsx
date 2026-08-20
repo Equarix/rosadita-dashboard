@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/components/providers/AuthContext";
 import Load from "@/components/shared/load/Load";
 import TiptapEditor from "@/components/shared/editor/TiptapEditor";
@@ -12,6 +12,8 @@ import { crmIconList, RenderLuIcon } from "@/utils/iconHelper";
 import {
   addToast,
   Button,
+  Card,
+  CardBody,
   Input,
   Modal,
   ModalBody,
@@ -24,8 +26,8 @@ import {
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { LuMessageSquare } from "react-icons/lu";
+import { useFieldArray, useForm } from "react-hook-form";
+import { LuMessageSquare, LuPlus, LuTrash2 } from "react-icons/lu";
 
 interface UpdateCrmCategoryProps {
   onClose: () => void;
@@ -40,23 +42,29 @@ export default function UpdateCrmCategory({
   onSuccess,
   category,
 }: UpdateCrmCategoryProps) {
-  const [speach, setSpeach] = useState<string>("");
-
   const {
     handleSubmit,
     register,
     formState: { errors },
     watch,
     setValue,
+    control,
     reset,
-  } = useForm<CrmCategoryInput>({
+  } = useForm({
     resolver: zodResolver(CrmCategorySchema),
     defaultValues: {
-      name: category.name,
-      icon: category.icon,
-      status: category.status,
-      speach: category.speach || "",
+      name: category?.name || "",
+      icon: category?.icon || "LuPill",
+      status: category?.status ?? true,
+      speaches: Array.isArray(category?.speaches)
+        ? category.speaches.map((s) => ({ name: s.name, speach: s.speach }))
+        : [],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "speaches",
   });
 
   useEffect(() => {
@@ -65,30 +73,28 @@ export default function UpdateCrmCategory({
         name: category.name,
         icon: category.icon,
         status: category.status,
-        speach: category.speach || "",
+        speaches: Array.isArray(category.speaches)
+          ? category.speaches.map((s) => ({ name: s.name, speach: s.speach }))
+          : [],
       });
-      setSpeach(category.speach || "");
     }
   }, [category, reset]);
 
   const { token } = useAuth();
   const selectedIcon = watch("icon");
   const currentStatus = watch("status");
+  const speachesWatch = watch("speaches");
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: CrmCategoryInput) => {
-      const payload = {
-        ...data,
-        speach,
-      };
       const res = await instance.patch(
         `/crm-categories/${category.categoryEnterpriseId}`,
-        payload,
+        data,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return res.data;
     },
@@ -109,7 +115,12 @@ export default function UpdateCrmCategory({
   });
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose} size="2xl" scrollBehavior="inside">
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onClose}
+      size="3xl"
+      scrollBehavior="inside"
+    >
       <Load loading={isPending} />
 
       <ModalContent>
@@ -119,7 +130,13 @@ export default function UpdateCrmCategory({
               Editar Categoría CRM
             </ModalHeader>
             <ModalBody>
-              <form id="update-crm-category-form" onSubmit={handleSubmit((values) => mutate(values))} className="flex flex-col gap-4">
+              <form
+                id="update-crm-category-form"
+                onSubmit={handleSubmit((values: CrmCategoryInput) =>
+                  mutate(values),
+                )}
+                className="flex flex-col gap-4"
+              >
                 <Input
                   label="Nombre de la categoría"
                   {...register("name")}
@@ -138,7 +155,12 @@ export default function UpdateCrmCategory({
                   onChange={(e) => {
                     setValue("icon", e.target.value);
                   }}
-                  startContent={<RenderLuIcon name={selectedIcon} className="size-5 text-primary" />}
+                  startContent={
+                    <RenderLuIcon
+                      name={selectedIcon}
+                      className="size-5 text-primary"
+                    />
+                  }
                 >
                   {(item) => (
                     <SelectItem key={item.value} textValue={item.label}>
@@ -150,20 +172,95 @@ export default function UpdateCrmCategory({
                   )}
                 </Select>
 
-                <div className="flex flex-col gap-1.5 mt-1">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                    <LuMessageSquare className="size-4 text-primary" />
-                    <span>Speach de la categoría</span>
+                <div className="flex flex-col gap-3 mt-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                      <LuMessageSquare className="size-4 text-primary" />
+                      <span>Speaches / Guiones ({fields.length})</span>
+                    </div>
+                    <Button
+                      size="sm"
+                      color="primary"
+                      variant="flat"
+                      startContent={<LuPlus className="size-4" />}
+                      onPress={() => append({ name: "", speach: "" })}
+                    >
+                      Agregar Speach
+                    </Button>
                   </div>
-                  <TiptapEditor
-                    content={speach}
-                    onChange={(html) => setSpeach(html)}
-                    outputFormat="html"
-                  />
+
+                  {errors.speaches?.root?.message && (
+                    <p className="text-xs text-danger font-medium">
+                      {errors.speaches.root.message}
+                    </p>
+                  )}
+
+                  <div className="flex flex-col gap-4">
+                    {fields.length === 0 ? (
+                      <p className="text-xs text-foreground-400 italic text-center py-2">
+                        No hay speaches agregados. Haz clic en "Agregar Speach"
+                        para añadir uno.
+                      </p>
+                    ) : (
+                      fields.map((field, index) => (
+                        <Card
+                          key={field.id}
+                          className="border border-default-200 shadow-none"
+                        >
+                          <CardBody className="flex flex-col gap-3 p-4">
+                            <div className="flex items-center justify-between gap-2">
+                              <Input
+                                label={`Nombre del Speach #${index + 1}`}
+                                placeholder="Ej. Saludo inicial, Cierre de venta..."
+                                {...register(`speaches.${index}.name`)}
+                                errorMessage={
+                                  errors.speaches?.[index]?.name?.message
+                                }
+                                isInvalid={!!errors.speaches?.[index]?.name}
+                                size="sm"
+                              />
+                              <Button
+                                isIconOnly
+                                color="danger"
+                                variant="light"
+                                size="sm"
+                                className="mt-4"
+                                onPress={() => remove(index)}
+                              >
+                                <LuTrash2 className="size-4" />
+                              </Button>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                              <span className="text-xs font-medium text-foreground-600">
+                                Contenido del Speach
+                              </span>
+                              <TiptapEditor
+                                content={speachesWatch?.[index]?.speach || ""}
+                                onChange={(html) =>
+                                  setValue(`speaches.${index}.speach`, html, {
+                                    shouldValidate: true,
+                                  })
+                                }
+                                outputFormat="html"
+                              />
+                              {errors.speaches?.[index]?.speach?.message && (
+                                <p className="text-xs text-danger">
+                                  {errors.speaches[index].speach.message}
+                                </p>
+                              )}
+                            </div>
+                          </CardBody>
+                        </Card>
+                      ))
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-2">
-                  <span className="text-sm font-medium">Estado de la categoría</span>
+                  <span className="text-sm font-medium">
+                    Estado de la categoría
+                  </span>
                   <Switch
                     isSelected={currentStatus ?? true}
                     onValueChange={(val) => setValue("status", val)}
@@ -184,7 +281,11 @@ export default function UpdateCrmCategory({
                 Cancelar
               </Button>
 
-              <Button color="primary" type="submit" form="update-crm-category-form">
+              <Button
+                color="primary"
+                type="submit"
+                form="update-crm-category-form"
+              >
                 Guardar Cambios
               </Button>
             </ModalFooter>
