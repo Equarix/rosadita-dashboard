@@ -125,7 +125,13 @@ export default function SelectWhatsappTemplateModal({
   const selectedSpeach = speaches[Number(selectedIndex)];
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose} size="2xl" backdrop="blur">
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onClose}
+      size="2xl"
+      scrollBehavior="inside"
+      backdrop="blur"
+    >
       <ModalContent>
         <ModalHeader className="flex items-center gap-2 text-foreground font-bold">
           <FaWhatsapp className="size-5 text-green-600" />
@@ -196,7 +202,7 @@ export default function SelectWhatsappTemplateModal({
                           )}
                         </Button>
                       </div>
-                      <p className="text-default-600 whitespace-pre-wrap bg-background p-3 rounded-lg border border-default-100 font-sans text-xs leading-relaxed">
+                      <p className="text-default-600 whitespace-pre-wrap bg-background p-3 rounded-lg border border-default-100 font-sans text-xs leading-relaxed max-h-48 overflow-y-auto">
                         {plainText}
                       </p>
                     </div>
