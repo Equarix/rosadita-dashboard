@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { SpeachItem } from "@/interface/response.interface";
 import {
+  addToast,
   Button,
   Modal,
   ModalBody,
@@ -11,7 +12,7 @@ import {
   RadioGroup,
 } from "@heroui/react";
 import { FaWhatsapp } from "react-icons/fa";
-import { LuExternalLink, LuMessageSquare } from "react-icons/lu";
+import { LuCheck, LuCopy, LuExternalLink, LuMessageSquare } from "react-icons/lu";
 
 interface SelectWhatsappTemplateModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export default function SelectWhatsappTemplateModal({
   speaches = [],
 }: SelectWhatsappTemplateModalProps) {
   const [selectedIndex, setSelectedIndex] = useState<string>("0");
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "";
 
@@ -51,6 +53,23 @@ export default function SelectWhatsappTemplateModal({
       .trim();
   };
 
+  const handleCopy = (text: string, idx?: number) => {
+    const plainText = formatSpeachText(text);
+    navigator.clipboard.writeText(plainText);
+    if (idx !== undefined) {
+      setCopiedIndex(idx);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    }
+    try {
+      addToast({
+        title: "Plantilla copiada al portapapeles",
+        color: "success",
+      });
+    } catch {
+      // fallback if ToastProvider is not present
+    }
+  };
+
   const handleSendWhatsApp = (text?: string) => {
     let messageText = "";
     if (text) {
@@ -66,6 +85,8 @@ export default function SelectWhatsappTemplateModal({
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     onClose();
   };
+
+  const selectedSpeach = speaches[Number(selectedIndex)];
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onClose} size="lg" backdrop="blur">
@@ -94,10 +115,26 @@ export default function SelectWhatsappTemplateModal({
                     value={idx.toString()}
                     className="max-w-full border border-default-200 hover:border-primary rounded-xl p-3 bg-default-50/50 transition-all data-[selected=true]:border-primary data-[selected=true]:bg-primary-50/20"
                   >
-                    <div className="flex flex-col gap-1 text-xs">
-                      <span className="font-bold text-foreground text-sm">
-                        {item.name || `Plantilla ${idx + 1}`}
-                      </span>
+                    <div className="flex flex-col gap-1 text-xs w-full">
+                      <div className="flex items-center justify-between gap-2 w-full">
+                        <span className="font-bold text-foreground text-sm">
+                          {item.name || `Plantilla ${idx + 1}`}
+                        </span>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          className="h-7 w-7 min-w-7 rounded-lg text-default-500 hover:text-primary"
+                          title="Copiar plantilla"
+                          onPress={() => handleCopy(item.speach, idx)}
+                        >
+                          {copiedIndex === idx ? (
+                            <LuCheck className="size-4 text-success" />
+                          ) : (
+                            <LuCopy className="size-4" />
+                          )}
+                        </Button>
+                      </div>
                       <p className="text-default-600 line-clamp-3 whitespace-pre-wrap bg-background p-2 rounded-lg border border-default-100 font-sans">
                         {plainText}
                       </p>
@@ -123,6 +160,27 @@ export default function SelectWhatsappTemplateModal({
           </Button>
 
           <div className="flex items-center gap-2">
+            {speaches && speaches.length > 0 && selectedSpeach && (
+              <Button
+                variant="flat"
+                color="primary"
+                size="sm"
+                className="flex items-center gap-1.5 font-medium"
+                onPress={() => handleCopy(selectedSpeach.speach, Number(selectedIndex))}
+              >
+                {copiedIndex === Number(selectedIndex) ? (
+                  <>
+                    <LuCheck className="size-4 text-success" />
+                    <span>¡Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <LuCopy className="size-4" />
+                    <span>Copiar plantilla</span>
+                  </>
+                )}
+              </Button>
+            )}
             <Button
               variant="flat"
               color="default"
