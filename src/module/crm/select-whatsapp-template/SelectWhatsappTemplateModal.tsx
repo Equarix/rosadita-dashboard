@@ -31,8 +31,25 @@ export default function SelectWhatsappTemplateModal({
 }: SelectWhatsappTemplateModalProps) {
   const [selectedIndex, setSelectedIndex] = useState<string>("0");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedPhone, setCopiedPhone] = useState<boolean>(false);
 
   const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "";
+
+  const handleCopyPhone = () => {
+    const targetPhone = cleanPhone || phone;
+    if (!targetPhone) return;
+    navigator.clipboard.writeText(targetPhone);
+    setCopiedPhone(true);
+    setTimeout(() => setCopiedPhone(false), 2000);
+    try {
+      addToast({
+        title: "Número de celular copiado",
+        color: "success",
+      });
+    } catch {
+      // fallback if ToastProvider is not present
+    }
+  };
 
   // Convert HTML or rich text to plain text for WhatsApp URL preserving line breaks
   const formatSpeachText = (text: string) => {
@@ -89,7 +106,7 @@ export default function SelectWhatsappTemplateModal({
   const selectedSpeach = speaches[Number(selectedIndex)];
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose} size="lg" backdrop="blur">
+    <Modal isOpen={isOpen} onOpenChange={onClose} size="2xl" backdrop="blur">
       <ModalContent>
         <ModalHeader className="flex items-center gap-2 text-foreground font-bold">
           <FaWhatsapp className="size-5 text-green-600" />
@@ -97,15 +114,37 @@ export default function SelectWhatsappTemplateModal({
         </ModalHeader>
 
         <ModalBody className="py-3 flex flex-col gap-4">
-          <p className="text-xs text-default-500">
-            Selecciona la plantilla de discurso (speech) que deseas incluir en el mensaje para <strong>{phone}</strong>:
-          </p>
+          <div className="flex items-center justify-between text-xs text-default-500 gap-2 flex-wrap bg-default-50 p-2.5 rounded-xl border border-default-100">
+            <span>
+              Selecciona la plantilla de discurso (speech) para <strong>{enterpriseName}</strong>:
+            </span>
+            <Button
+              size="sm"
+              variant="flat"
+              color="default"
+              className="h-7 text-xs font-semibold flex items-center gap-1.5 border border-default-200 bg-background"
+              onPress={handleCopyPhone}
+              title="Copiar número de celular"
+            >
+              {copiedPhone ? (
+                <>
+                  <LuCheck className="size-3.5 text-success" />
+                  <span className="text-success font-medium">¡Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <LuCopy className="size-3.5 text-default-500" />
+                  <span>{phone}</span>
+                </>
+              )}
+            </Button>
+          </div>
 
           {speaches && speaches.length > 0 ? (
             <RadioGroup
               value={selectedIndex}
               onValueChange={setSelectedIndex}
-              className="gap-3"
+              className="gap-3 w-full"
             >
               {speaches.map((item, idx) => {
                 const plainText = formatSpeachText(item.speach);
@@ -113,9 +152,12 @@ export default function SelectWhatsappTemplateModal({
                   <Radio
                     key={idx}
                     value={idx.toString()}
-                    className="max-w-full border border-default-200 hover:border-primary rounded-xl p-3 bg-default-50/50 transition-all data-[selected=true]:border-primary data-[selected=true]:bg-primary-50/20"
+                    classNames={{
+                      base: "max-w-full w-full border border-default-200 hover:border-primary rounded-xl p-3 bg-default-50/50 transition-all data-[selected=true]:border-primary data-[selected=true]:bg-primary-50/20 m-0",
+                      label: "w-full",
+                    }}
                   >
-                    <div className="flex flex-col gap-1 text-xs w-full">
+                    <div className="flex flex-col gap-1.5 text-xs w-full">
                       <div className="flex items-center justify-between gap-2 w-full">
                         <span className="font-bold text-foreground text-sm">
                           {item.name || `Plantilla ${idx + 1}`}
@@ -135,7 +177,7 @@ export default function SelectWhatsappTemplateModal({
                           )}
                         </Button>
                       </div>
-                      <p className="text-default-600 line-clamp-3 whitespace-pre-wrap bg-background p-2 rounded-lg border border-default-100 font-sans">
+                      <p className="text-default-600 whitespace-pre-wrap bg-background p-3 rounded-lg border border-default-100 font-sans text-xs leading-relaxed">
                         {plainText}
                       </p>
                     </div>
@@ -154,12 +196,12 @@ export default function SelectWhatsappTemplateModal({
           )}
         </ModalBody>
 
-        <ModalFooter className="flex items-center justify-between">
+        <ModalFooter className="flex flex-wrap items-center justify-between gap-2">
           <Button variant="flat" size="sm" onPress={onClose}>
             Cancelar
           </Button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {speaches && speaches.length > 0 && selectedSpeach && (
               <Button
                 variant="flat"
